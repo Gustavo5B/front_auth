@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { ModalService } from '../../services/modal.service'; // ✅ IMPORTAR
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -18,12 +19,24 @@ export class LoginComponent {
   mensaje: string = '';
   isError: boolean = false;
   isLoading: boolean = false;
-   currentYear: number = new Date().getFullYear(); // ← AGREGAR ESTA LÍNEA
+  currentYear: number = new Date().getFullYear();
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService // ✅ INYECTAR
   ) {}
+
+  // =========================================================
+  // 📄 ABRIR MODALES (NUEVOS MÉTODOS)
+  // =========================================================
+  openTerminos(): void {
+    this.modalService.openTerminos();
+  }
+
+  openPrivacidad(): void {
+    this.modalService.openPrivacidad();
+  }
 
   onSubmit(): void {
     this.mensaje = '';

@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { ModalService } from '../../services/modal.service'; // ✅ IMPORTAR
 
 interface PasswordRequirement {
   text: string;
@@ -41,8 +42,20 @@ export class RegisterComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService // ✅ INYECTAR ModalService
   ) { }
+
+  // =========================================================
+  // 📄 ABRIR MODALES (NUEVOS MÉTODOS)
+  // =========================================================
+  openTerminos(): void {
+    this.modalService.openTerminos();
+  }
+
+  openPrivacidad(): void {
+    this.modalService.openPrivacidad();
+  }
 
   // =========================================================
   // 👁️ TOGGLE MOSTRAR/OCULTAR CONTRASEÑA
@@ -126,7 +139,7 @@ export class RegisterComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // ✅ VALIDAR ACEPTACIÓN DE TÉRMINOS (NUEVO)
+    // ✅ VALIDAR ACEPTACIÓN DE TÉRMINOS
     if (!this.aceptoTerminos) {
       this.errorMessage = 'Debes aceptar los Términos y Condiciones para continuar';
       return;
@@ -164,7 +177,7 @@ export class RegisterComponent {
 
     this.isLoading = true;
 
-    // ✅ NOTA: El backend guardará aceptoTerminos = true y la fecha
+    // ✅ El backend guardará aceptoTerminos = true y la fecha
     this.authService.register(this.nombre, this.email, this.password).subscribe({
       next: (response) => {
         this.isLoading = false;

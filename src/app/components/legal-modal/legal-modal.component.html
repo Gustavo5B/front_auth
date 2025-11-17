@@ -1,0 +1,19 @@
+<div *ngIf="isOpen" class="modal-overlay" (click)="onOverlayClick($event)">
+  <div class="modal-container">
+    <!-- Botón de cerrar -->
+    <button class="btn-close" (click)="close()">✕</button>
+
+    <!-- Iframe que carga el HTML de public/legal/ -->
+    <iframe 
+      *ngIf="content === 'terminos'"
+      src="/legal/terminos-v1.0.html"
+      class="legal-iframe"
+    ></iframe>
+
+    <iframe 
+      *ngIf="content === 'privacidad'"
+      src="/legal/privacidad-v1.0.html"
+      class="legal-iframe"
+    ></iframe>
+  </div>
+</div>

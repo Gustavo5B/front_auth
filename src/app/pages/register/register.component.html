@@ -157,7 +157,8 @@
         </div>
 
         <!-- ========================================
-     ✅ CHECKBOX DE TÉRMINOS (NUEVO)
+   <!-- ========================================
+     ✅ CHECKBOX DE TÉRMINOS
 ======================================== -->
 <div class="terms-checkbox-group">
   <label class="checkbox-container">
@@ -172,14 +173,14 @@
     <span class="checkmark"></span>
     <span class="checkbox-label">
       Acepto los 
-      <a routerLink="/legal/terminos-v1.0.html" target="_blank" class="terms-link">Términos y Condiciones</a>
+      <a (click)="openTerminos()" class="terms-link">Términos y Condiciones</a>
       y la
-      <a routerLink="/legal/privacidad-v1.0.html" target="_blank" class="terms-link">Política de Privacidad</a>
+      <a (click)="openPrivacidad()" class="terms-link">Política de Privacidad</a>
     </span>
   </label>
 </div>
 
-<!-- BOTÓN (ahora deshabilitado si no acepta términos) -->
+<!-- BOTÓN -->
 <button 
   type="submit" 
   class="btn-register"

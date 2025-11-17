@@ -121,27 +121,28 @@
       </p>
 
       <!-- ========================================
-           ✨ FOOTER CON TÉRMINOS (SOLO INFORMATIVO)
-      ======================================== -->
-      <div class="login-footer">
-        <p class="footer-disclaimer">
-          Al iniciar sesión, confirmas que has leído y aceptado nuestros
-        </p>
-        <div class="footer-links">
-          <a routerLink="/legal/terminos-v1.0.html" target="_blank" class="footer-link">
-            <span class="link-icon">📄</span>
-            Términos y Condiciones
-          </a>
-          <span class="separator">•</span>
-          <a routerLink="/legal/privacidad-v1.0.html" target="_blank" class="footer-link">
-            <span class="link-icon">🔒</span>
-            Política de Privacidad
-          </a>
-        </div>
-        <p class="copyright">
-          © {{ currentYear }} NU★B Studio. Todos los derechos reservados.
-        </p>
-      </div>
+     <!-- ========================================
+     ✨ FOOTER CON TÉRMINOS (CON MODAL)
+======================================== -->
+<div class="login-footer">
+  <p class="footer-disclaimer">
+    Al iniciar sesión, confirmas que has leído y aceptado nuestros
+  </p>
+  <div class="footer-links">
+    <a (click)="openTerminos()" class="footer-link">
+      <span class="link-icon">📄</span>
+      Términos y Condiciones
+    </a>
+    <span class="separator">•</span>
+    <a (click)="openPrivacidad()" class="footer-link">
+      <span class="link-icon">🔒</span>
+      Política de Privacidad
+    </a>
+  </div>
+  <p class="copyright">
+    © {{ currentYear }} NU★B Studio. Todos los derechos reservados.
+  </p>
+</div>
     </div>
   </div>
 </div>

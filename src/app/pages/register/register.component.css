@@ -20,7 +20,21 @@
   position: relative;
   overflow: hidden;
 }
+/* ========================================
+   ENLACES DE TÉRMINOS (CLICKEABLES)
+======================================== */
+.terms-link {
+  color: #3498db;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
 
+.terms-link:hover {
+  color: #2980b9;
+  text-decoration: none;
+}
 .banner-content {
   position: relative;
   z-index: 2;
