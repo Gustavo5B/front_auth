@@ -1,139 +1,458 @@
-
+/* ============================================
+   🎨 CONTENEDOR PRINCIPAL
+============================================ */
 .login-container {
+  display: flex;
   min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ============================================
+   🌈 BANNER LATERAL (40%)
+============================================ */
+.login-banner {
+  flex: 0 0 40%;
+  background: linear-gradient(135deg, #8D4CCD 0%, #CC4EA1 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner-content {
+  position: relative;
+  z-index: 2;
+  max-width: 400px;
+  color: white;
+  text-align: center;
+}
+
+/* Logo del banner */
+.banner-logo {
+  margin-bottom: 2px;
+}
+
+.banner-logo-image {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Títulos del banner */
+.banner-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  line-height: 1.2;
+}
+
+.banner-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.95;
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.banner-art-types {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: 40px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+/* Características */
+.banner-features {
+  text-align: left;
+  margin-top: 50px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s, background 0.3s;
+}
+
+.feature-item:hover {
+  transform: translateX(10px);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.feature-icon {
+  font-size: 1.8rem;
+  margin-right: 15px;
+}
+
+.feature-text {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Decoración del banner */
+.banner-decoration {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.decoration-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.circle-1 {
+  width: 300px;
+  height: 300px;
+  top: -100px;
+  left: -100px;
+}
+
+.circle-2 {
+  width: 200px;
+  height: 200px;
+  bottom: 50px;
+  right: -50px;
+}
+
+.circle-3 {
+  width: 150px;
+  height: 150px;
+  top: 50%;
+  left: 20%;
+}
+
+/* ============================================
+   📋 SECCIÓN DEL FORMULARIO (60%)
+============================================ */
+.login-form-section {
+  flex: 0 0 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: #f5f7fa;
 }
 
 .login-card {
   background: white;
-  padding: 40px;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  padding: 50px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
   width: 100%;
-  max-width: 400px;
+  max-width: 480px;
+  animation: slideIn 0.5s ease-out;
 }
 
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Logo móvil (oculto en desktop) */
+.mobile-logo {
+  display: none;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.mobile-logo-image {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+}
+
+/* Títulos del formulario */
 .login-title {
   text-align: center;
-  margin-bottom: 30px;
-  font-size: 28px;
+  margin-bottom: 10px;
+  font-size: 2rem;
   font-weight: 700;
   color: #333;
 }
 
+.login-subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 35px;
+  font-size: 0.95rem;
+}
+
+/* ============================================
+   📝 FORMULARIO
+============================================ */
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
   font-weight: 600;
-  color: #555;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.label-icon {
+  margin-right: 8px;
+  font-size: 1.1rem;
 }
 
 .form-group input {
   width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  padding: 14px 18px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
   font-size: 16px;
-  transition: border-color 0.3s;
+  transition: all 0.3s;
   box-sizing: border-box;
+  background: #fafafa;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #FF840E;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(255, 132, 14, 0.1);
+}
+
+.form-group input:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   💬 MENSAJES
+============================================ */
+.error-message,
+.success-message {
+  display: flex;
+  align-items: center;
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
 }
 
 .error-message {
   background: #fee;
   color: #c33;
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 15px;
-  font-size: 14px;
+  border-left: 4px solid #c33;
 }
 
-.btn-login {
-  width: 100%;
-  padding: 14px;
-  background: #667eea;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.btn-login:hover {
-  background: #5568d3;
-}
-
-.register-link {
-  text-align: center;
-  margin-top: 20px;
-  color: #666;
-  font-size: 14px;
-}
-
-.register-link a {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.register-link a:hover {
-  text-decoration: underline;
-}
 .success-message {
   background: #d4edda;
   color: #155724;
-  border: 1px solid #c3e6cb;
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 15px;
-  font-size: 14px;
+  border-left: 4px solid #28a745;
 }
+
+.message-icon {
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+/* ============================================
+   🔘 BOTÓN
+============================================ */
+.btn-login {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #FF840E 0%, #FF6B00 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(255, 132, 14, 0.3);
+}
+
+.btn-login:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 132, 14, 0.4);
+}
+
+.btn-login:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-login:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.loading-spinner {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   🔗 LINKS
+============================================ */
 .forgot-link-container {
   text-align: center;
-  margin-top: 16px;
+  margin-top: 20px;
 }
 
 .forgot-link {
-  color: #667eea;
+  color: #8D4CCD;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 0.9rem;
   transition: color 0.2s;
+  cursor: pointer;
+  font-weight: 500;
 }
 
 .forgot-link:hover {
-  color: #764ba2;
+  color: #CC4EA1;
   text-decoration: underline;
 }
-.forgot-link-container {
+
+/* Divisor */
+.divider {
+  display: flex;
+  align-items: center;
   text-align: center;
-  margin-top: 16px;
-  margin-bottom: 8px;
+  margin: 30px 0;
+  color: #999;
+  font-size: 0.9rem;
 }
 
-.forgot-link {
-  color: #667eea;
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.divider span {
+  padding: 0 15px;
+}
+
+/* Link de registro */
+.register-link {
+  text-align: center;
+  margin-top: 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.register-link a {
+  color: #FF840E;
   text-decoration: none;
-  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
   transition: color 0.2s;
-  cursor: pointer; /* ✅ Asegura que se vea como clickeable */
-  display: inline-block; /* ✅ Hace que el área clickeable sea más grande */
 }
 
-.forgot-link:hover {
-  color: #764ba2;
+.register-link a:hover {
+  color: #FF6B00;
   text-decoration: underline;
+}
+
+/* ============================================
+   📱 RESPONSIVE - TABLETS
+============================================ */
+@media (max-width: 1024px) {
+  .login-banner {
+    flex: 0 0 35%;
+  }
+
+  .login-form-section {
+    flex: 0 0 65%;
+  }
+
+  .banner-title {
+    font-size: 2rem;
+  }
+
+  .banner-features {
+    margin-top: 30px;
+  }
+
+  .feature-item {
+    padding: 12px;
+  }
+}
+
+/* ============================================
+   📱 RESPONSIVE - MÓVIL
+============================================ */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  /* Ocultar banner en móvil */
+  .login-banner {
+    display: none;
+  }
+
+  /* Formulario ocupa todo el ancho */
+  .login-form-section {
+    flex: 1;
+    padding: 20px;
+    background: linear-gradient(135deg, #8D4CCD 0%, #CC4EA1 100%);
+  }
+
+  .login-card {
+    padding: 30px 25px;
+    max-width: 100%;
+  }
+
+  /* Mostrar logo en móvil */
+  .mobile-logo {
+    display: block;
+  }
+
+  .login-title {
+    font-size: 1.75rem;
+  }
+
+  .form-group input {
+    padding: 12px 16px;
+  }
+
+  .btn-login {
+    padding: 14px;
+  }
 }

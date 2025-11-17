@@ -1,0 +1,62 @@
+<div class="verify-container">
+  <div class="verify-card">
+    <div class="icon-container">
+      <span class="icon">📧</span>
+    </div>
+    
+    <h2 class="verify-title">Verifica tu correo</h2>
+    
+    <p class="verify-description">
+      Enviamos un código de 6 dígitos a:<br>
+      <strong>{{ email }}</strong>
+    </p>
+
+    <form (ngSubmit)="onVerify()">
+      <div class="form-group">
+        <label for="codigo">Código de verificación:</label>
+        <input 
+          type="text" 
+          id="codigo" 
+          [(ngModel)]="codigo" 
+          name="codigo"
+          placeholder="000000"
+          maxlength="6"
+          class="code-input"
+          [class.error]="errorMessage"
+          required
+          autofocus
+        />
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="success-message" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn-verify"
+        [disabled]="isLoading || codigo.length !== 6"
+      >
+        <span *ngIf="!isLoading">Verificar</span>
+        <span *ngIf="isLoading">Verificando...</span>
+      </button>
+    </form>
+
+    <div class="resend-section">
+      <p>¿No recibiste el código?</p>
+      <button 
+        type="button" 
+        class="btn-resend"
+        (click)="onResendCode()"
+        [disabled]="isResending"
+      >
+        <span *ngIf="!isResending">Reenviar código</span>
+        <span *ngIf="isResending">Reenviando...</span>
+      </button>
+    </div>
+  </div>
+</div>

@@ -4,6 +4,7 @@ import { RegisterComponent } from './pages/register/register.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { TwoFactorSetupComponent } from './pages/two-factor-setup/two-factor-setup.component';
 import { TwoFactorVerifyComponent } from './pages/two-factor-verify/two-factor-verify.component';
+import { VerifyEmailComponent } from './pages/verify-email/verify-email.component';
 
 export const routes: Routes = [
   // ============================================
@@ -12,6 +13,7 @@ export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'verify-email', component: VerifyEmailComponent }, // ← NUEVA RUTA
   { path: 'dashboard', component: DashboardComponent },
 
   // ============================================
@@ -27,7 +29,7 @@ export const routes: Routes = [
   },
 
   // ============================================
-  // AUTENTICACIÓN 2FA (EMAIL) - ✅ NUEVO
+  // AUTENTICACIÓN 2FA (EMAIL)
   // ============================================
   {
     path: 'setup-email-2fa',

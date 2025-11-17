@@ -23,7 +23,6 @@ export class AuthService {
   private twoFactorApiUrl = `${environment.apiUrl}/2fa`;
   private gmail2faApiUrl = `${environment.apiUrl}/gmail2fa`;
 
-
   constructor(
     private http: HttpClient,
     private router: Router
@@ -36,6 +35,43 @@ export class AuthService {
   // =========================================================
   register(nombre: string, correo: string, contrasena: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, { nombre, correo, contrasena });
+  }
+
+  // =========================================================
+  // ✉️ VERIFICAR EMAIL CON CÓDIGO
+  // =========================================================
+  verifyEmail(correo: string, codigo: string): Observable<any> {
+    console.log('✉️ Verificando email:', correo);
+    return this.http.post(`${this.apiUrl}/verify-email`, { correo, codigo });
+  }
+
+  // =========================================================
+  // 🔄 REENVIAR CÓDIGO DE VERIFICACIÓN
+  // =========================================================
+  resendVerificationCode(correo: string): Observable<any> {
+    console.log('🔄 Reenviando código de verificación a:', correo);
+    return this.http.post(`${this.apiUrl}/resend-code`, { correo });
+  }
+
+  // =========================================================
+  // 💾 GUARDAR EMAIL TEMPORAL (para verificación)
+  // =========================================================
+  saveTempEmail(correo: string): void {
+    localStorage.setItem('temp_email_verification', correo);
+  }
+
+  // =========================================================
+  // 📧 OBTENER EMAIL TEMPORAL
+  // =========================================================
+  getTempEmail(): string | null {
+    return localStorage.getItem('temp_email_verification');
+  }
+
+  // =========================================================
+  // 🗑️ LIMPIAR EMAIL TEMPORAL
+  // =========================================================
+  clearTempEmail(): void {
+    localStorage.removeItem('temp_email_verification');
   }
 
   // =========================================================
@@ -88,9 +124,7 @@ export class AuthService {
   // ✅ VERIFICAR CÓDIGO DE GMAIL-2FA
   // =========================================================
   verifyLoginCode(data: { correo: string; codigo: string }): Observable<any> {
-  return this.http.post(`${this.gmail2faApiUrl}/verificar-codigo-login`, data).pipe(
-
-
+    return this.http.post(`${this.gmail2faApiUrl}/verificar-codigo-login`, data).pipe(
       tap((response: any) => {
         console.log('📥 Respuesta verify-login-code:', response);
         
@@ -110,11 +144,9 @@ export class AuthService {
   // =========================================================
   // 📧 REENVIAR CÓDIGO GMAIL-2FA
   // =========================================================
-resendLoginCode(correo: string): Observable<any> {
-  return this.http.post(`${this.gmail2faApiUrl}/enviar-codigo-login`, { correo });
-}
-
-
+  resendLoginCode(correo: string): Observable<any> {
+    return this.http.post(`${this.gmail2faApiUrl}/enviar-codigo-login`, { correo });
+  }
 
   // =========================================================
   // 📧 ENVIAR CÓDIGO DE EMAIL DURANTE LOGIN
@@ -151,7 +183,7 @@ resendLoginCode(correo: string): Observable<any> {
   // 💾 GUARDAR TOKEN
   // =========================================================
   saveToken(token: string): void {
-    localStorage.setItem('access_token', token); // ← Cambio importante
+    localStorage.setItem('access_token', token);
     console.log('💾 Token guardado en localStorage');
   }
 
@@ -159,7 +191,7 @@ resendLoginCode(correo: string): Observable<any> {
   // 🔑 OBTENER TOKEN
   // =========================================================
   getToken(): string | null {
-    return localStorage.getItem('access_token'); // ← Cambio importante
+    return localStorage.getItem('access_token');
   }
 
   // =========================================================
@@ -234,8 +266,9 @@ resendLoginCode(correo: string): Observable<any> {
   logout(): void {
     localStorage.removeItem('access_token');
     localStorage.removeItem('token'); // Limpiar legacy
-    localStorage.removeItem('user');
+    localStorage.removeItem('user'); // ✅ CORRECTO
     localStorage.removeItem('temp_correo_2fa');
+    localStorage.removeItem('temp_email_verification'); // Limpiar email de verificación
     this.router.navigate(['/login']);
     console.log('👋 Sesión cerrada');
   }
