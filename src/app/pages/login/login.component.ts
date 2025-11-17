@@ -18,6 +18,7 @@ export class LoginComponent {
   mensaje: string = '';
   isError: boolean = false;
   isLoading: boolean = false;
+   currentYear: number = new Date().getFullYear(); // ← AGREGAR ESTA LÍNEA
 
   constructor(
     private authService: AuthService,

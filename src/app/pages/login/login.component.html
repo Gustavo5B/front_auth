@@ -119,6 +119,29 @@
       <p class="register-link">
         ¿No tienes cuenta? <a (click)="goToRegister()">Crear una cuenta</a>
       </p>
+
+      <!-- ========================================
+           ✨ FOOTER CON TÉRMINOS (SOLO INFORMATIVO)
+      ======================================== -->
+      <div class="login-footer">
+        <p class="footer-disclaimer">
+          Al iniciar sesión, confirmas que has leído y aceptado nuestros
+        </p>
+        <div class="footer-links">
+          <a routerLink="/terms" target="_blank" class="footer-link">
+            <span class="link-icon">📄</span>
+            Términos y Condiciones
+          </a>
+          <span class="separator">•</span>
+          <a routerLink="/privacy" target="_blank" class="footer-link">
+            <span class="link-icon">🔒</span>
+            Política de Privacidad
+          </a>
+        </div>
+        <p class="copyright">
+          © {{ currentYear }} NU★B Studio. Todos los derechos reservados.
+        </p>
+      </div>
     </div>
   </div>
 </div>

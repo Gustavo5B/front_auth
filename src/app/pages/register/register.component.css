@@ -185,7 +185,158 @@
   text-align: center;
   margin-bottom: 25px;
 }
+/* ========================================
+   ✅ CHECKBOX DE TÉRMINOS
+======================================== */
+.terms-checkbox-group {
+  margin: 20px 0;
+  padding: 15px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 2px solid #dee2e6;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
 
+.terms-checkbox-group:hover {
+  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  border-color: #adb5bd;
+}
+
+/* Contenedor del checkbox personalizado */
+.checkbox-container {
+  display: flex;
+  align-items: flex-start;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  padding-left: 35px;
+  line-height: 1.6;
+}
+
+/* Ocultar checkbox nativo */
+.checkbox-container input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Checkbox personalizado */
+.checkmark {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 22px;
+  width: 22px;
+  background-color: #ffffff;
+  border: 2px solid #ced4da;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+/* Hover en checkbox */
+.checkbox-container:hover input ~ .checkmark {
+  border-color: #495057;
+  background-color: #f8f9fa;
+}
+
+/* Checkbox marcado */
+.checkbox-container input:checked ~ .checkmark {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border-color: #28a745;
+}
+
+/* Icono de check (✓) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+
+/* Mostrar check cuando está marcado */
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Texto del checkbox */
+.checkbox-label {
+  color: #495057;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+/* Links dentro del checkbox */
+.terms-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid transparent;
+}
+
+.terms-link:hover {
+  color: #0056b3;
+  border-bottom-color: #0056b3;
+}
+
+/* Checkbox deshabilitado */
+.checkbox-container input:disabled ~ .checkmark {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #e9ecef;
+}
+
+.checkbox-container input:disabled ~ .checkbox-label {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   🚫 BOTÓN DESHABILITADO POR TÉRMINOS
+======================================== */
+.btn-register.disabled-by-terms {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-register.disabled-by-terms:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.2);
+}
+
+/* ========================================
+   📱 RESPONSIVE
+======================================== */
+@media (max-width: 768px) {
+  .terms-checkbox-group {
+    padding: 12px;
+    margin: 15px 0;
+  }
+
+  .checkbox-label {
+    font-size: 13px;
+  }
+
+  .checkmark {
+    height: 20px;
+    width: 20px;
+  }
+
+  .checkbox-container {
+    padding-left: 30px;
+  }
+}
 .mobile-logo-image {
   width: 70px;
   height: 70px;

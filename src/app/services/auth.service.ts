@@ -34,7 +34,7 @@ export class AuthService {
   // 📝 REGISTER
   // =========================================================
   register(nombre: string, correo: string, contrasena: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, { nombre, correo, contrasena });
+    return this.http.post(`${this.apiUrl}/register`, { nombre, correo, contrasena,aceptoTerminos: true });
   }
 
   // =========================================================

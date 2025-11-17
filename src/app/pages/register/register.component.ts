@@ -27,6 +27,10 @@ export class RegisterComponent {
   showPassword: boolean = false;
   passwordTouched: boolean = false;
   showPasswordRequirements: boolean = false;
+  
+  // ✅ NUEVA PROPIEDAD PARA TÉRMINOS
+  aceptoTerminos: boolean = false;
+  
   passwordRequirements: PasswordRequirement[] = [
     { text: 'Mínimo 8 caracteres', met: false, icon: '📏' },
     { text: 'Una letra mayúscula', met: false, icon: '🔤' },
@@ -53,26 +57,26 @@ export class RegisterComponent {
   onPasswordChange(): void {
     this.passwordTouched = true;
     
-    // Validar cada requisito
     this.passwordRequirements[0].met = this.password.length >= 8;
     this.passwordRequirements[1].met = /[A-Z]/.test(this.password);
     this.passwordRequirements[2].met = /[a-z]/.test(this.password);
     this.passwordRequirements[3].met = /[0-9]/.test(this.password);
     this.passwordRequirements[4].met = /[@$!%*?&#]/.test(this.password);
   }
-// =========================================================
-// 👁️ MOSTRAR/OCULTAR REQUISITOS AL HACER FOCUS
-// =========================================================
-onPasswordFocus(): void {
-  this.showPasswordRequirements = true;
-}
 
-onPasswordBlur(): void {
-  // Solo ocultar si la contraseña está vacía
-  if (!this.password) {
-    this.showPasswordRequirements = false;
+  // =========================================================
+  // 👁️ MOSTRAR/OCULTAR REQUISITOS AL HACER FOCUS
+  // =========================================================
+  onPasswordFocus(): void {
+    this.showPasswordRequirements = true;
   }
-}
+
+  onPasswordBlur(): void {
+    if (!this.password) {
+      this.showPasswordRequirements = false;
+    }
+  }
+
   // =========================================================
   // 💪 CALCULAR FORTALEZA DE CONTRASEÑA
   // =========================================================
@@ -96,20 +100,18 @@ onPasswordBlur(): void {
   // =========================================================
   // 📝 TEXTO DE FORTALEZA
   // =========================================================
- // =========================================================
-// 📝 TEXTO DE FORTALEZA
-// =========================================================
-getPasswordStrengthText(): string {
-  const strength = this.getPasswordStrength();
-  const texts: { [key: string]: string } = {  // 👈 AÑADE ESTE TIPADO
-    none: '',
-    weak: 'Débil',
-    medium: 'Media',
-    good: 'Buena',
-    strong: 'Fuerte'
-  };
-  return texts[strength] || '';
-}
+  getPasswordStrengthText(): string {
+    const strength = this.getPasswordStrength();
+    const texts: { [key: string]: string } = {
+      none: '',
+      weak: 'Débil',
+      medium: 'Media',
+      good: 'Buena',
+      strong: 'Fuerte'
+    };
+    return texts[strength] || '';
+  }
+
   // =========================================================
   // ✅ VERIFICAR SI CONTRASEÑA ES VÁLIDA
   // =========================================================
@@ -118,11 +120,17 @@ getPasswordStrengthText(): string {
   }
 
   // =========================================================
-  // 📋 REGISTRO
+  // 📋 REGISTRO (CON VALIDACIÓN DE TÉRMINOS)
   // =========================================================
   onRegister(): void {
     this.errorMessage = '';
     this.successMessage = '';
+
+    // ✅ VALIDAR ACEPTACIÓN DE TÉRMINOS (NUEVO)
+    if (!this.aceptoTerminos) {
+      this.errorMessage = 'Debes aceptar los Términos y Condiciones para continuar';
+      return;
+    }
 
     // Validaciones básicas
     if (!this.nombre || !this.email || !this.password) {
@@ -156,26 +164,22 @@ getPasswordStrengthText(): string {
 
     this.isLoading = true;
 
+    // ✅ NOTA: El backend guardará aceptoTerminos = true y la fecha
     this.authService.register(this.nombre, this.email, this.password).subscribe({
       next: (response) => {
         this.isLoading = false;
         console.log('✅ Registro exitoso:', response);
         
-        // Verificar si requiere verificación
         if (response.requiresVerification) {
           this.successMessage = '📧 Revisa tu correo para verificar tu cuenta';
-          
-          // Guardar email temporalmente
           this.authService.saveTempEmail(this.email);
           
-          // Redirigir a verificación
           setTimeout(() => {
             this.router.navigate(['/verify-email'], {
               queryParams: { email: this.email }
             });
           }, 1500);
         } else {
-          // Flujo antiguo (por compatibilidad)
           this.successMessage = 'Registro exitoso. Redirigiendo al login...';
           setTimeout(() => {
             this.router.navigate(['/login']);
@@ -186,7 +190,6 @@ getPasswordStrengthText(): string {
         this.isLoading = false;
         console.error('❌ Error en registro:', error);
         
-        // Manejar errores específicos
         if (error.status === 400) {
           if (error.error?.errors && Array.isArray(error.error.errors)) {
             this.errorMessage = error.error.errors.join(', ');
