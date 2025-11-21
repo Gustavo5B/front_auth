@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
+import { InactivityService } from '../../services/inactivity.service'; // ✅ IMPORTAR
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -24,7 +25,8 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private inactivityService: InactivityService // ✅ INYECTAR
   ) {}
 
   // =========================================================
@@ -39,7 +41,7 @@ export class LoginComponent {
   }
 
   // =========================================================
-  // 🔐 LOGIN CON MANEJO DE BLOQUEO
+  // 🔐 LOGIN CON MANEJO DE BLOQUEO Y MONITOREO DE INACTIVIDAD
   // =========================================================
   onSubmit(): void {
     this.mensaje = '';
@@ -63,7 +65,6 @@ export class LoginComponent {
         if (response.blocked) {
           console.log('🔒 Cuenta bloqueada');
           
-          // Mostrar mensaje con tiempo restante
           if (response.minutesRemaining) {
             const minutos = response.minutesRemaining;
             const plural = minutos > 1 ? 's' : '';
@@ -123,6 +124,10 @@ export class LoginComponent {
 
         this.showMessage('Inicio de sesión exitoso ✅', false);
         
+        // ✅ INICIAR MONITOREO DE INACTIVIDAD
+        this.inactivityService.startMonitoring();
+        console.log('✅ Monitoreo de inactividad iniciado (15 minutos)');
+        
         setTimeout(() => {
           this.router.navigate(['/dashboard']);
         }, 1500);
@@ -135,37 +140,34 @@ export class LoginComponent {
         // ============================================
         // 🔒 MANEJO DE ERRORES DE BLOQUEO
         // ============================================
-       // 🔒 MANEJO DE ERRORES DE BLOQUEO
-  // ============================================
-  if (error.status === 403 && error.error?.blocked) {
-    if (error.error.minutesRemaining) {
-      const minutos = error.error.minutesRemaining;
-      const plural = minutos > 1 ? 's' : '';
-      
-      // ✅ CALCULAR HORA DE DESBLOQUEO EN HORA LOCAL
-      const ahora = new Date();
-      const horaDesbloqueo = new Date(ahora.getTime() + (minutos * 60000));
-      const horaFormateada = horaDesbloqueo.toLocaleTimeString('es-MX', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      });
-      
-      this.showMessage(
-        `🔒 Cuenta bloqueada. Intenta en ${minutos} minuto${plural} (${horaFormateada}).`,
-        true
-      );
-    } else {
-      this.showMessage(error.error.message, true);
-    }
-    return;
-  }
+        if (error.status === 403 && error.error?.blocked) {
+          if (error.error.minutesRemaining) {
+            const minutos = error.error.minutesRemaining;
+            const plural = minutos > 1 ? 's' : '';
+            
+            // ✅ CALCULAR HORA DE DESBLOQUEO EN HORA LOCAL
+            const ahora = new Date();
+            const horaDesbloqueo = new Date(ahora.getTime() + (minutos * 60000));
+            const horaFormateada = horaDesbloqueo.toLocaleTimeString('es-MX', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true
+            });
+            
+            this.showMessage(
+              `🔒 Cuenta bloqueada. Intenta en ${minutos} minuto${plural} (${horaFormateada}).`,
+              true
+            );
+          } else {
+            this.showMessage(error.error.message, true);
+          }
+          return;
+        }
 
         // ============================================
         // ⚠️ MANEJO DE INTENTOS FALLIDOS
         // ============================================
         if (error.status === 401 && error.error?.attemptsRemaining !== undefined) {
-          // Contraseña incorrecta con contador
           const intentosRestantes = error.error.attemptsRemaining;
           
           if (intentosRestantes === 0) {

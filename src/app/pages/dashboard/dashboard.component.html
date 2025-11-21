@@ -186,7 +186,7 @@
   </main>
 
   <!-- ============================================
-       VISTA: SEGURIDAD (Tu código original)
+       VISTA: SEGURIDAD
        ============================================ -->
   <main class="content" *ngIf="vistaActual === 'seguridad'">
     <section class="hero-banner small">
@@ -212,22 +212,29 @@
       </div>
 
       <!-- Opción 2: Email -->
-<!-- Opción 2: Email -->
-<div class="security-card" (click)="configurarEmail2FA()">
-  <div class="security-icon">📧</div>
-  <h3>Correo Electrónico</h3>
-  <p>Código enviado a tu email</p>
-  <span 
-    class="security-badge" 
-    [ngClass]="{
-      'active': usuario?.metodo_gmail_2fa,
-      'disabled': !usuario?.metodo_gmail_2fa
-    }">
-    {{ usuario?.metodo_gmail_2fa ? 'Activo' : 'Disponible' }}
-  </span>
-  <button class="btn-configure">Configurar</button>
-</div>
+      <div class="security-card" (click)="configurarEmail2FA()">
+        <div class="security-icon">📧</div>
+        <h3>Correo Electrónico</h3>
+        <p>Código enviado a tu email</p>
+        <span 
+          class="security-badge" 
+          [ngClass]="{
+            'active': usuario?.metodo_gmail_2fa,
+            'disabled': !usuario?.metodo_gmail_2fa
+          }">
+          {{ usuario?.metodo_gmail_2fa ? 'Activo' : 'Disponible' }}
+        </span>
+        <button class="btn-configure">Configurar</button>
+      </div>
 
+      <!-- 🔥 OPCIÓN 3: CERRAR OTRAS SESIONES (NUEVA) -->
+      <div class="security-card" (click)="cerrarOtrasSesiones()">
+        <div class="security-icon">🔥</div>
+        <h3>Cerrar otras sesiones</h3>
+        <p>Cierra todas las sesiones activas excepto esta</p>
+        <span class="security-badge">Seguridad</span>
+        <button class="btn-configure">Cerrar sesiones</button>
+      </div>
 
       <!-- Opción 4: Sin 2FA -->
       <div class="security-card">

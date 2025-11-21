@@ -34,7 +34,7 @@ export class AuthService {
   // 📝 REGISTER
   // =========================================================
   register(nombre: string, correo: string, contrasena: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, { nombre, correo, contrasena,aceptoTerminos: true });
+    return this.http.post(`${this.apiUrl}/register`, { nombre, correo, contrasena, aceptoTerminos: true });
   }
 
   // =========================================================
@@ -261,15 +261,30 @@ export class AuthService {
   }
 
   // =========================================================
-  // 🚪 LOGOUT
+  // 🚪 LOGOUT (ACTUALIZADO CON INACTIVITY SERVICE)
   // =========================================================
   logout(): void {
+    // Limpiar tokens y datos
     localStorage.removeItem('access_token');
-    localStorage.removeItem('token'); // Limpiar legacy
-    localStorage.removeItem('user'); // ✅ CORRECTO
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     localStorage.removeItem('temp_correo_2fa');
-    localStorage.removeItem('temp_email_verification'); // Limpiar email de verificación
-    this.router.navigate(['/login']);
+    localStorage.removeItem('temp_email_verification');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('isLoggedIn');
+    
     console.log('👋 Sesión cerrada');
+    
+    // Redirigir al login
+    this.router.navigate(['/login']);
   }
+  // =========================================================
+// 🔥 CERRAR OTRAS SESIONES
+// =========================================================
+closeOtherSessions(): Observable<any> {
+  console.log('🔥 Cerrando otras sesiones...');
+  return this.http.post(`${this.apiUrl}/close-other-sessions`, {});
+}
 }
