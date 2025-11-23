@@ -25,15 +25,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         const errorCode = error.error?.code;
         
         // Si la sesión fue revocada o expiró
-        if (errorCode === 'SESSION_REVOKED') {
-          alert('🔒 Tu sesión fue cerrada desde otro dispositivo.\n\nPor favor inicia sesión nuevamente.');
-          
-          // Limpiar localStorage
-          localStorage.clear();
-          
-          // Redirigir al login
-          router.navigate(['/login']);
-        } else if (errorCode === 'TOKEN_EXPIRED') {
+        if (errorCode === 'SESSION_REVOKED' || errorCode === 'TOKEN_EXPIRED') {
+  console.log('❌ Sesión inválida detectada por interceptor'); // Solo log
+  localStorage.clear();
+  router.navigate(['/login']);
+} else if (errorCode === 'TOKEN_EXPIRED') {
           alert('⏰ Tu sesión ha expirado.\n\nPor favor inicia sesión nuevamente.');
           
           localStorage.clear();
