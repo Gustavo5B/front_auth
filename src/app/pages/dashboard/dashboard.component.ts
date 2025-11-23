@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { InactivityService } from '../../services/inactivity.service';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,10 +12,11 @@ import { InactivityService } from '../../services/inactivity.service';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   usuario: any = null;
   tiene2FA: boolean = false;
   vistaActual: 'inicio' | 'seguridad' = 'inicio';
+  private sessionCheckSubscription?: Subscription;
 
   constructor(
     public authService: AuthService,
@@ -38,6 +40,29 @@ export class DashboardComponent implements OnInit {
 
     // Cargar datos del usuario
     this.cargarDatosUsuario();
+    
+    // ✅ INICIAR VERIFICACIÓN PERIÓDICA DE SESIÓN
+    this.startSessionCheck();
+  }
+
+  ngOnDestroy(): void {
+    // Limpiar suscripción al salir del componente
+    if (this.sessionCheckSubscription) {
+      this.sessionCheckSubscription.unsubscribe();
+    }
+  }
+
+  // =========================================================
+  // 🔄 VERIFICAR SESIÓN CADA 30 SEGUNDOS
+  // =========================================================
+  startSessionCheck(): void {
+    this.sessionCheckSubscription = interval(30000).subscribe(() => {
+      if (!this.authService.isAuthenticated()) {
+        console.log('⚠️ Sesión inválida detectada');
+        alert('Tu sesión ya no es válida. Serás redirigido al login.');
+        this.authService.logout();
+      }
+    });
   }
 
   cargarDatosUsuario(): void {
@@ -64,6 +89,11 @@ export class DashboardComponent implements OnInit {
     // Detener monitoreo de inactividad antes de hacer logout
     this.inactivityService.stopMonitoring();
     console.log('🛑 Monitoreo de inactividad detenido');
+    
+    // Detener verificación de sesión
+    if (this.sessionCheckSubscription) {
+      this.sessionCheckSubscription.unsubscribe();
+    }
     
     // Cerrar sesión
     this.authService.logout();
@@ -108,7 +138,7 @@ export class DashboardComponent implements OnInit {
   }
 
   // =========================================================
-  // 🔥 CERRAR OTRAS SESIONES (NUEVO)
+  // 🔥 CERRAR OTRAS SESIONES
   // =========================================================
   cerrarOtrasSesiones(): void {
     const confirmacion = confirm(
