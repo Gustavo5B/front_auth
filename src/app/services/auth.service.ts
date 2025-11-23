@@ -263,6 +263,9 @@ export class AuthService {
   // =========================================================
   // 🚪 LOGOUT (ACTUALIZADO CON INACTIVITY SERVICE)
   // =========================================================
+// =========================================================
+  // 🚪 LOGOUT (ACTUALIZADO CON INACTIVITY SERVICE)
+  // =========================================================
   logout(): void {
     // Limpiar tokens y datos
     localStorage.removeItem('access_token');
@@ -280,11 +283,28 @@ export class AuthService {
     // Redirigir al login
     this.router.navigate(['/login']);
   }
+
   // =========================================================
-// 🔥 CERRAR OTRAS SESIONES
-// =========================================================
+  // 🔥 CERRAR OTRAS SESIONES (ACTUALIZADO)
+  // =========================================================
+  // ✅ CORRECTO (con headers y token)
 closeOtherSessions(): Observable<any> {
   console.log('🔥 Cerrando otras sesiones...');
-  return this.http.post(`${this.apiUrl}/close-other-sessions`, {});
+  
+  const token = this.getToken();
+  console.log('🔑 Token a enviar:', token ? 'Existe ✅' : 'NO EXISTE ❌');
+  
+  if (!token) {
+    console.error('❌ No hay token disponible');
+    throw new Error('No hay token de autenticación');
+  }
+  
+  const headers = {
+    'Authorization': `Bearer ${token}`
+  };
+  
+  console.log('📤 Enviando request con headers:', headers);
+  
+  return this.http.post(`${this.apiUrl}/close-other-sessions`, {}, { headers });
 }
 }
