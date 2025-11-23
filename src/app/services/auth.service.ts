@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
+import { Observable, throwError } from 'rxjs'; // ← Agregar throwError
 
 interface TokenPayload {
   sub?: string;
@@ -306,5 +306,21 @@ closeOtherSessions(): Observable<any> {
   console.log('📤 Enviando request con headers:', headers);
   
   return this.http.post(`${this.apiUrl}/close-other-sessions`, {}, { headers });
+}
+// =========================================================
+// ✅ VERIFICAR SI LA SESIÓN ES VÁLIDA
+// =========================================================
+checkSession(): Observable<any> {
+  const token = this.getToken();
+  
+  if (!token) {
+    return throwError(() => new Error('No hay token'));
+  }
+  
+  const headers = {
+    'Authorization': `Bearer ${token}`
+  };
+  
+  return this.http.get(`${this.apiUrl}/check-session`, { headers });
 }
 }

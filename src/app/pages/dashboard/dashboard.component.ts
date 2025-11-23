@@ -55,15 +55,37 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // =========================================================
   // 🔄 VERIFICAR SESIÓN CADA 30 SEGUNDOS
   // =========================================================
-  startSessionCheck(): void {
-    this.sessionCheckSubscription = interval(30000).subscribe(() => {
-      if (!this.authService.isAuthenticated()) {
-        console.log('⚠️ Sesión inválida detectada');
-        alert('Tu sesión ya no es válida. Serás redirigido al login.');
-        this.authService.logout();
+ // =========================================================
+// 🔄 VERIFICAR SESIÓN CADA 30 SEGUNDOS CON BACKEND
+// =========================================================
+startSessionCheck(): void {
+  this.sessionCheckSubscription = interval(30000).subscribe(() => {
+    console.log('🔍 Verificando sesión con el backend...');
+    
+    this.authService.checkSession().subscribe({
+      next: (response) => {
+        console.log('✅ Sesión válida:', response);
+      },
+      error: (error) => {
+        console.error('❌ Sesión inválida:', error);
+        
+        if (error.status === 401) {
+          const errorCode = error.error?.code;
+          
+          if (errorCode === 'SESSION_REVOKED') {
+            alert('🔒 Tu sesión fue cerrada desde otro dispositivo.\n\nPor favor inicia sesión nuevamente.');
+          } else if (errorCode === 'TOKEN_EXPIRED') {
+            alert('⏰ Tu sesión ha expirado.\n\nPor favor inicia sesión nuevamente.');
+          } else {
+            alert('Tu sesión ya no es válida. Serás redirigido al login.');
+          }
+          
+          this.authService.logout();
+        }
       }
     });
-  }
+  });
+}
 
   cargarDatosUsuario(): void {
     this.usuario = this.authService.getUserData();
