@@ -4,6 +4,13 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { RecoveryService } from '../../services/recovery.service';
 
+// ✅ AGREGAR ESTA INTERFAZ
+interface RecoveryResponse {
+  message: string;
+  attemptsRemaining?: number;
+  warning?: string;
+}
+
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
@@ -16,6 +23,8 @@ export class ForgotPasswordComponent {
   isLoading = false;
   errorMessage = '';
   successMessage = '';
+  warningMessage = '';
+  attemptsRemaining: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -36,25 +45,47 @@ export class ForgotPasswordComponent {
     this.isLoading = true;
     this.errorMessage = '';
     this.successMessage = '';
+    this.warningMessage = '';
 
     const correo = this.forgotForm.value.correo;
 
+    // ✅ TIPAR LA RESPUESTA
     this.recoveryService.requestRecoveryCode(correo).subscribe({
-      next: (response) => {
+      next: (response: RecoveryResponse) => {  // ← AGREGAR TIPO AQUÍ
         this.isLoading = false;
         this.successMessage = response.message;
         
-        // Guardar correo en localStorage para los siguientes pasos
+        if (response.attemptsRemaining !== undefined) {
+          this.attemptsRemaining = response.attemptsRemaining;
+          console.log(`⚠️ Intentos restantes: ${this.attemptsRemaining}`);
+        }
+
+        if (response.warning) {
+          this.warningMessage = response.warning;
+        }
+
         localStorage.setItem('recovery_email', correo);
-        
-        // Redirigir a verificación de código después de 2 segundos
+
         setTimeout(() => {
           this.router.navigate(['/verify-recovery-code']);
         }, 2000);
       },
-      error: (error) => {
+      error: (error: any) => {  // ← TAMBIÉN PUEDES TIPAR EL ERROR
         this.isLoading = false;
-        this.errorMessage = error.error?.message || 'Error al enviar el código. Intenta de nuevo.';
+        
+        if (error.status === 429) {
+          const data = error.error;
+          
+          if (data?.blocked) {
+            this.errorMessage = data.message;
+            
+            if (data?.minutesRemaining) {
+              console.log(`🔒 Bloqueado por ${data.minutesRemaining} minutos`);
+            }
+          }
+        } else {
+          this.errorMessage = error.error?.message || 'Error al enviar el código. Intenta de nuevo.';
+        }
       }
     });
   }
