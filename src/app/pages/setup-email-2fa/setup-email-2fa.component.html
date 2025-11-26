@@ -9,8 +9,17 @@
       </p>
 
       <div class="info-box">
-        <p><strong>Tu correo:</strong> {{ correo }}</p>
+        <p><strong>Tu correo:</strong> {{ correoEnmascarado }}</p>
         <p>Recibirás códigos de verificación en este correo.</p>
+      </div>
+
+      <!-- Mensajes -->
+      <div class="message error-message" *ngIf="mensaje && isError">
+        {{ mensaje }}
+      </div>
+
+      <div class="message success-message" *ngIf="mensaje && !isError">
+        {{ mensaje }}
       </div>
 
       <button 
@@ -31,7 +40,7 @@
     <div *ngIf="paso === 2">
       <h2>📧 Verificar Código</h2>
       <p class="subtitle">
-        Revisa tu correo <strong>{{ correo }}</strong> e ingresa el código que recibiste.
+        Revisa tu correo <strong>{{ correoEnmascarado }}</strong> e ingresa el código que recibiste.
       </p>
 
       <div class="input-section">
@@ -49,7 +58,7 @@
         />
       </div>
 
-      <div class="message" [class.error]="isError" [class.success]="!isError" *ngIf="mensaje">
+      <div class="message" [class.error-message]="isError" [class.success-message]="!isError" *ngIf="mensaje">
         {{ mensaje }}
       </div>
 

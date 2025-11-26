@@ -57,7 +57,7 @@ export class LoginComponent {
     this.authService.login(this.correo, this.contrasena).subscribe({
       next: (response) => {
         this.isLoading = false;
-        console.log('✅ Respuesta del login:', response);
+        console.log('✅ Login exitoso. Token recibido y almacenado de forma segura.');
 
         // ============================================
         // 🔒 VERIFICAR SI LA CUENTA ESTÁ BLOQUEADA

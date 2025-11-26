@@ -80,7 +80,8 @@ export class AuthService {
   login(correo: string, contrasena: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, { correo, contrasena }).pipe(
       tap((response: any) => {
-        console.log('📥 Respuesta del login:', response);
+        
+      console.log('📥 Login procesado correctamente');
         
         // Guardar token (priorizar access_token, pero soportar token legacy)
         if (response.access_token) {
