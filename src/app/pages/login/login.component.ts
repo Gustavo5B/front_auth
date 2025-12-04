@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
-import { InactivityService } from '../../services/inactivity.service'; // ✅ IMPORTAR
+import { InactivityService } from '../../services/inactivity.service';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -21,13 +21,21 @@ export class LoginComponent {
   isError: boolean = false;
   isLoading: boolean = false;
   currentYear: number = new Date().getFullYear();
+  mostrarContrasena: boolean = false; // ← AGREGAR ESTA LÍNEA
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private modalService: ModalService,
-    private inactivityService: InactivityService // ✅ INYECTAR
+    private inactivityService: InactivityService
   ) {}
+
+  // =========================================================
+  // 👁️ MOSTRAR/OCULTAR CONTRASEÑA
+  // =========================================================
+  toggleMostrarContrasena(): void {
+    this.mostrarContrasena = !this.mostrarContrasena;
+  }
 
   // =========================================================
   // 📄 ABRIR MODALES
@@ -46,7 +54,6 @@ export class LoginComponent {
   onSubmit(): void {
     this.mensaje = '';
 
-    // Validación básica
     if (!this.correo || !this.contrasena) {
       this.showMessage('Por favor completa todos los campos', true);
       return;
@@ -59,9 +66,6 @@ export class LoginComponent {
         this.isLoading = false;
         console.log('✅ Login exitoso. Token recibido y almacenado de forma segura.');
 
-        // ============================================
-        // 🔒 VERIFICAR SI LA CUENTA ESTÁ BLOQUEADA
-        // ============================================
         if (response.blocked) {
           console.log('🔒 Cuenta bloqueada');
           
@@ -78,21 +82,16 @@ export class LoginComponent {
           return;
         }
 
-        // ============================================
-        // 🔐 VERIFICAR SI REQUIERE 2FA
-        // ============================================
         if (response.requires2FA) {
           this.showMessage('Credenciales correctas. Verificando 2FA...', false);
           localStorage.setItem('temp_correo_2fa', response.correo);
 
           setTimeout(() => {
             if (response.metodo_2fa === 'TOTP') {
-              // Autenticación por app (Google Authenticator)
               this.router.navigate(['/two-factor-verify'], {
                 state: { correo: response.correo, metodo_2fa: 'TOTP' }
               });
             } else if (response.metodo_2fa === 'GMAIL') {
-              // Autenticación por Gmail (código enviado por correo)
               this.router.navigate(['/verify-email-code'], {
                 state: { correo: response.correo, metodo_2fa: 'GMAIL' }
               });
@@ -103,17 +102,12 @@ export class LoginComponent {
           return;
         }
 
-        // ============================================
-        // ✅ LOGIN EXITOSO (SIN 2FA)
-        // ============================================
-        // Guardar token (priorizar access_token)
         const token = response.access_token || response.token;
         if (token) {
           localStorage.setItem('access_token', token);
-          localStorage.setItem('token', token); // Compatibilidad
+          localStorage.setItem('token', token);
         }
 
-        // Guardar datos del usuario
         if (response.usuario) {
           localStorage.setItem('userEmail', response.usuario.correo);
           localStorage.setItem('userName', response.usuario.nombre);
@@ -124,7 +118,6 @@ export class LoginComponent {
 
         this.showMessage('Inicio de sesión exitoso ✅', false);
         
-        // ✅ INICIAR MONITOREO DE INACTIVIDAD
         this.inactivityService.startMonitoring();
         console.log('✅ Monitoreo de inactividad iniciado (15 minutos)');
         
@@ -137,15 +130,11 @@ export class LoginComponent {
         this.isLoading = false;
         console.error('❌ Error en login:', error);
 
-        // ============================================
-        // 🔒 MANEJO DE ERRORES DE BLOQUEO
-        // ============================================
         if (error.status === 403 && error.error?.blocked) {
           if (error.error.minutesRemaining) {
             const minutos = error.error.minutesRemaining;
             const plural = minutos > 1 ? 's' : '';
             
-            // ✅ CALCULAR HORA DE DESBLOQUEO EN HORA LOCAL
             const ahora = new Date();
             const horaDesbloqueo = new Date(ahora.getTime() + (minutos * 60000));
             const horaFormateada = horaDesbloqueo.toLocaleTimeString('es-MX', {
@@ -164,9 +153,6 @@ export class LoginComponent {
           return;
         }
 
-        // ============================================
-        // ⚠️ MANEJO DE INTENTOS FALLIDOS
-        // ============================================
         if (error.status === 401 && error.error?.attemptsRemaining !== undefined) {
           const intentosRestantes = error.error.attemptsRemaining;
           
@@ -189,9 +175,6 @@ export class LoginComponent {
           return;
         }
 
-        // ============================================
-        // ❌ OTROS ERRORES
-        // ============================================
         const errorMsg = error.error?.message || 'Error al iniciar sesión';
         this.showMessage(errorMsg, true);
       }

@@ -7,7 +7,7 @@ import { AuthService } from './auth.service';
 })
 export class InactivityService {
   private inactivityTimeout: any;
-  private readonly INACTIVITY_TIME = 1 * 60 * 1000; // 15 minutos en milisegundos
+  private readonly INACTIVITY_TIME = 15 * 60 * 1000; // 15 minutos en milisegundos
   private isMonitoring = false;
 
   constructor(

@@ -16,6 +16,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   usuario: any = null;
   tiene2FA: boolean = false;
   vistaActual: 'inicio' | 'seguridad' = 'inicio';
+  mostrarModalQR: boolean = false;
   private sessionCheckSubscription?: Subscription;
 
   constructor(
@@ -27,66 +28,60 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     console.log('🔍 Verificando autenticación...');
     
-    // Verificar autenticación
     if (!this.authService.isAuthenticated()) {
       console.log('❌ Usuario no autenticado, redirigiendo...');
       this.router.navigate(['/login']);
       return;
     }
 
-    // Asegurar que el monitoreo esté activo
     this.inactivityService.startMonitoring();
     console.log('✅ Monitoreo de inactividad verificado en dashboard');
 
-    // Cargar datos del usuario
     this.cargarDatosUsuario();
-    
-    // ✅ INICIAR VERIFICACIÓN PERIÓDICA DE SESIÓN
     this.startSessionCheck();
   }
 
   ngOnDestroy(): void {
-    // Limpiar suscripción al salir del componente
     if (this.sessionCheckSubscription) {
       this.sessionCheckSubscription.unsubscribe();
     }
   }
 
   // =========================================================
-  // 🔄 VERIFICAR SESIÓN CADA 30 SEGUNDOS
+  // 🔄 VERIFICAR SESIÓN CADA 30 SEGUNDOS CON BACKEND
   // =========================================================
- // =========================================================
-// 🔄 VERIFICAR SESIÓN CADA 30 SEGUNDOS CON BACKEND
-// =========================================================
-startSessionCheck(): void {
-  this.sessionCheckSubscription = interval(30000).subscribe(() => {
-    console.log('🔍 Verificando sesión con el backend...');
-    
-    this.authService.checkSession().subscribe({
-      next: (response) => {
-        console.log('✅ Sesión válida:', response);
-      },
-      error: (error) => {
-        console.error('❌ Sesión inválida:', error);
-        
-        if (error.status === 401) {
-          const errorCode = error.error?.code;
+  startSessionCheck(): void {
+    this.sessionCheckSubscription = interval(30000).subscribe(() => {
+      console.log('🔍 Verificando sesión con el backend...');
+      
+      this.authService.checkSession().subscribe({
+        next: (response) => {
+          console.log('✅ Sesión válida:', response);
+        },
+        error: (error) => {
+          console.error('❌ Sesión inválida:', error);
           
-          if (errorCode === 'SESSION_REVOKED') {
-            alert('🔒 Tu sesión fue cerrada desde otro dispositivo.\n\nPor favor inicia sesión nuevamente.');
-          } else if (errorCode === 'TOKEN_EXPIRED') {
-            alert('⏰ Tu sesión ha expirado.\n\nPor favor inicia sesión nuevamente.');
-          } else {
-            alert('Tu sesión ya no es válida. Serás redirigido al login.');
+          if (error.status === 401) {
+            const errorCode = error.error?.code;
+            
+            if (errorCode === 'SESSION_REVOKED') {
+              alert('🔒 Tu sesión fue cerrada desde otro dispositivo.\n\nPor favor inicia sesión nuevamente.');
+            } else if (errorCode === 'TOKEN_EXPIRED') {
+              alert('⏰ Tu sesión ha expirado.\n\nPor favor inicia sesión nuevamente.');
+            } else {
+              alert('Tu sesión ya no es válida. Serás redirigido al login.');
+            }
+            
+            this.authService.logout();
           }
-          
-          this.authService.logout();
         }
-      }
+      });
     });
-  });
-}
+  }
 
+  // =========================================================
+  // 👤 CARGAR DATOS DEL USUARIO
+  // =========================================================
   cargarDatosUsuario(): void {
     this.usuario = this.authService.getUserData();
     console.log('👤 Datos del usuario cargados:', this.usuario);
@@ -98,6 +93,9 @@ startSessionCheck(): void {
     }
   }
 
+  // =========================================================
+  // 🔀 CAMBIAR VISTA
+  // =========================================================
   cambiarVista(vista: 'inicio' | 'seguridad'): void {
     this.vistaActual = vista;
   }
@@ -108,16 +106,13 @@ startSessionCheck(): void {
   logout(): void {
     console.log('👋 Cerrando sesión...');
     
-    // Detener monitoreo de inactividad antes de hacer logout
     this.inactivityService.stopMonitoring();
     console.log('🛑 Monitoreo de inactividad detenido');
     
-    // Detener verificación de sesión
     if (this.sessionCheckSubscription) {
       this.sessionCheckSubscription.unsubscribe();
     }
     
-    // Cerrar sesión
     this.authService.logout();
   }
 
@@ -155,7 +150,6 @@ startSessionCheck(): void {
     const correo = this.usuario.correo.trim();
     console.log('✅ Correo encontrado:', correo);
 
-    // Ir a la configuración de Email 2FA
     this.router.navigate(['/setup-email-2fa']);
   }
 
@@ -211,5 +205,46 @@ startSessionCheck(): void {
         }
       }
     });
+  }
+
+  // =========================================================
+  // 🛒 COMPRAR PRODUCTO DESTACADO
+  // =========================================================
+  comprarProducto(): void {
+  console.log('🛒 Iniciando proceso de compra de la olla...');
+  
+  const confirmar = confirm(
+    '🛒 Confirmar Compra\n\n' +
+    'Producto: Olla de Barro Huasteca\n' +
+    'Precio: $650.00 MXN\n\n' +
+    '¿Deseas proceder con la compra?'
+  );
+
+  if (confirmar) {
+    alert(
+      '✅ ¡Gracias por tu compra!\n\n' +
+      'Tu pedido ha sido registrado.\n' +
+      'Recibirás un correo con los detalles del envío.\n\n' +
+      'Número de orden: #NUB-' + Math.floor(Math.random() * 100000)
+    );
+  }
+}
+
+  // =========================================================
+  // 📱 MOSTRAR MODAL QR PARA VER EN 3D
+  // =========================================================
+  mostrarQR(): void {
+    console.log('📱 Mostrando código QR para vista 3D...');
+    this.mostrarModalQR = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  // =========================================================
+  // ❌ CERRAR MODAL QR
+  // =========================================================
+  cerrarModalQR(): void {
+    console.log('❌ Cerrando modal QR...');
+    this.mostrarModalQR = false;
+    document.body.style.overflow = 'auto';
   }
 }

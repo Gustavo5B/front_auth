@@ -7,7 +7,44 @@
   border-top: 1px solid #e2e8f0;
   text-align: center;
 }
+/* ============================================
+   CAMPO DE CONTRASEÑA CON OJITO
+   ============================================ */
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
 
+.password-input-container input {
+  width: 100%;
+  padding-right: 50px;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.toggle-password-btn:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+.toggle-password-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .footer-disclaimer {
   color: #718096;
   font-size: 12px;

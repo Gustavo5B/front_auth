@@ -71,21 +71,31 @@
         </div>
 
         <!-- Contraseña -->
-        <div class="form-group">
-          <label for="contrasena">
-            <span class="label-icon">🔒</span>
-            Contraseña
-          </label>
-          <input 
-            type="password" 
-            id="contrasena" 
-            [(ngModel)]="contrasena" 
-            name="contrasena"
-            placeholder="••••••••"
-            [disabled]="isLoading"
-            required
-          />
-        </div>
+<div class="form-group">
+  <label for="contrasena">
+    <span class="label-icon">🔒</span>
+    Contraseña
+  </label>
+  <div class="password-input-container">
+    <input 
+      [type]="mostrarContrasena ? 'text' : 'password'" 
+      id="contrasena" 
+      [(ngModel)]="contrasena" 
+      name="contrasena"
+      placeholder="••••••••"
+      [disabled]="isLoading"
+      required
+    />
+    <button 
+      type="button" 
+      class="toggle-password-btn"
+      (click)="toggleMostrarContrasena()"
+      [disabled]="isLoading"
+    >
+      {{ mostrarContrasena ? '🙈' : '👁️' }}
+    </button>
+  </div>
+</div>
 
         <!-- Mensajes -->
         <div class="error-message" *ngIf="mensaje && isError">
