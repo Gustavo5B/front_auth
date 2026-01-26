@@ -1,0 +1,73 @@
+<div class="error-container error-403">
+  <div class="error-content">
+    <!-- Animación de error -->
+    <div class="error-animation">
+      <div class="lock-container">
+        <div class="lock-body">🔒</div>
+        <div class="lock-shake"></div>
+      </div>
+      <div class="error-circle">
+        <span class="error-number">403</span>
+      </div>
+    </div>
+
+    <!-- Contenido del error -->
+    <div class="error-text">
+      <h1>🚫 Acceso Denegado</h1>
+      <p class="error-description">
+        Lo sentimos, no tienes permiso para acceder a esta sección de nuestra galería. 
+        Esta área está restringida solo para usuarios autorizados.
+      </p>
+
+      <!-- Razones comunes -->
+      <div class="reasons-box">
+        <h3>Posibles razones:</h3>
+        <div class="reasons-list">
+          <div class="reason-item">
+            <span class="reason-icon">👤</span>
+            <span>No has iniciado sesión</span>
+          </div>
+          <div class="reason-item">
+            <span class="reason-icon">🔑</span>
+            <span>Tu sesión ha expirado</span>
+          </div>
+          <div class="reason-item">
+            <span class="reason-icon">⛔</span>
+            <span>No tienes los permisos necesarios</span>
+          </div>
+          <div class="reason-item">
+            <span class="reason-icon">📧</span>
+            <span>Tu cuenta aún no está verificada</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="error-actions">
+        <button class="btn-primary" (click)="goToLogin()">
+          <span class="icon">🔑</span>
+          Iniciar Sesión
+        </button>
+        <button class="btn-secondary" (click)="goHome()">
+          <span class="icon">🏠</span>
+          Volver al inicio
+        </button>
+      </div>
+
+      <!-- Ayuda adicional -->
+      <div class="help-section">
+        <p class="help-text">
+          ¿Necesitas ayuda? 
+          <a routerLink="/contacto" class="help-link">Contáctanos</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decoración de fondo -->
+  <div class="background-decoration">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+</div>

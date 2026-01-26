@@ -5,6 +5,12 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { TwoFactorSetupComponent } from './pages/two-factor-setup/two-factor-setup.component';
 import { TwoFactorVerifyComponent } from './pages/two-factor-verify/two-factor-verify.component';
 import { VerifyEmailComponent } from './pages/verify-email/verify-email.component';
+import { AboutUsComponent } from './pages/about-us/about-us.component';
+
+// ✅ IMPORTAR COMPONENTES DE ERROR
+import { Error404Component } from './components/errors/error-404/error-404.component';
+import { Error500Component } from './components/errors/error-500/error-500.component';
+import { Error403Component } from './components/errors/error-403/error-403.component';
 
 export const routes: Routes = [
   // ============================================
@@ -13,9 +19,10 @@ export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'verify-email', component: VerifyEmailComponent }, // ← NUEVA RUTA
+  { path: 'verify-email', component: VerifyEmailComponent },
   { path: 'dashboard', component: DashboardComponent },
-
+   { path: 'about-us', component: AboutUsComponent },  // ← AGREGAR
+  { path: 'sobre-nosotros', redirectTo: '/about-us' }, // ← Opcional: alias en español
   // ============================================
   // AUTENTICACIÓN 2FA (TOTP)
   // ============================================
@@ -62,7 +69,14 @@ export const routes: Routes = [
   },
 
   // ============================================
-  // RUTA FALLBACK
+  // ✅ PÁGINAS DE ERROR (SIN AUTENTICACIÓN)
   // ============================================
-  { path: '**', redirectTo: '/login' }
+  { path: '404', component: Error404Component },
+  { path: '403', component: Error403Component },
+  { path: '500', component: Error500Component },
+
+  // ============================================
+  // RUTA FALLBACK (DEBE IR AL FINAL)
+  // ============================================
+  { path: '**', redirectTo: '/404' }
 ];

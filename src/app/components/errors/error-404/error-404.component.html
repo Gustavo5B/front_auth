@@ -1,0 +1,66 @@
+<div class="error-container">
+  <div class="error-content">
+    <!-- Animación de error -->
+    <div class="error-animation">
+      <div class="error-circle">
+        <span class="error-number">404</span>
+      </div>
+      <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+    </div>
+
+    <!-- Contenido del error -->
+    <div class="error-text">
+      <h1>¡Ups! Página no encontrada</h1>
+      <p class="error-description">
+        Parece que esta obra de arte no existe en nuestra galería. 
+        La página que buscas pudo haber sido movida o ya no está disponible.
+      </p>
+
+      <!-- Botones de acción -->
+      <div class="error-actions">
+        <button class="btn-primary" (click)="goHome()">
+          <span class="icon">🏠</span>
+          Volver al inicio
+        </button>
+        <button class="btn-secondary" (click)="goBack()">
+          <span class="icon">⬅️</span>
+          Regresar
+        </button>
+      </div>
+
+      <!-- Sugerencias -->
+      <div class="suggestions">
+        <h3>¿Qué tal si intentas con esto?</h3>
+        <div class="suggestion-links">
+          <a routerLink="/dashboard">
+            <span class="suggestion-icon">🎨</span>
+            Explorar Galería
+          </a>
+          <a routerLink="/artistas">
+            <span class="suggestion-icon">👨‍🎨</span>
+            Ver Artistas
+          </a>
+          <a routerLink="/blog">
+            <span class="suggestion-icon">📝</span>
+            Leer Blog
+          </a>
+          <a routerLink="/contacto">
+            <span class="suggestion-icon">📧</span>
+            Contactanos
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decoración de fondo -->
+  <div class="background-decoration">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+</div>

@@ -14,7 +14,7 @@
       </a>
       <a class="nav-link">Artistas</a>
       <a class="nav-link">Blog</a>
-      <a class="nav-link">Sobre nosotros</a>
+      <a class="nav-link" routerLink="/about-us">Sobre nosotros</a>
       <a class="nav-link" [class.active]="vistaActual === 'seguridad'" (click)="cambiarVista('seguridad')">
         Mi cuenta
       </a>
@@ -368,7 +368,23 @@
         <button class="btn-configure secondary" (click)="cambiarVista('inicio')">Volver</button>
       </div>
     </div>
+
+    
   </main>
+ <!-- ============================================
+       🧪 BOTONES DE PRUEBA - PÁGINAS DE ERROR (TEMPORAL)
+       ============================================ -->
+  <div class="test-buttons-container">
+    <button class="test-btn test-404" (click)="testError(404)">
+      🔍 Probar 404
+    </button>
+    <button class="test-btn test-403" (click)="testError(403)">
+      🔒 Probar 403
+    </button>
+    <button class="test-btn test-500" (click)="testError(500)">
+      ⚠️ Probar 500
+    </button>
+  </div>
 
   <!-- Footer -->
   <footer class="footer">

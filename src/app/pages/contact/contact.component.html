@@ -1,0 +1,312 @@
+<div class="contact-container">
+  <!-- ============================================
+       HERO SECTION
+       ============================================ -->
+  <section class="contact-hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-label">Estamos aquí para ti</span>
+      <h1 class="hero-title">Contáctanos</h1>
+      <p class="hero-subtitle">
+        ¿Tienes preguntas? ¿Necesitas ayuda? Envíanos un mensaje y te responderemos pronto
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       INFORMACIÓN DE CONTACTO
+       ============================================ -->
+  <section class="contact-info-section">
+    <div class="section-container">
+      <div class="contact-grid">
+        <!-- Tarjeta 1: Ubicación -->
+        <div class="info-card">
+          <div class="info-icon">📍</div>
+          <h3 class="info-title">Ubicación</h3>
+          <p class="info-text">
+            Chapulhuacán, Hidalgo<br>
+            México
+          </p>
+        </div>
+
+        <!-- Tarjeta 2: Email -->
+        <div class="info-card">
+          <div class="info-icon">📧</div>
+          <h3 class="info-title">Email</h3>
+          <p class="info-text">
+            <a href="mailto:contacto@nubstudio.com">contacto&#64;nubstudio.com</a>
+          </p>
+        </div>
+
+        <!-- Tarjeta 3: Teléfono -->
+        <div class="info-card">
+          <div class="info-icon">📱</div>
+          <h3 class="info-title">Teléfono</h3>
+          <p class="info-text">
+            <a href="tel:+527711234567">+52 771 123 4567</a>
+          </p>
+        </div>
+
+        <!-- Tarjeta 4: Horario -->
+        <div class="info-card">
+          <div class="info-icon">🕐</div>
+          <h3 class="info-title">Horario</h3>
+          <p class="info-text">
+            Lun - Vie: 9:00 - 18:00<br>
+            Sábado: 10:00 - 14:00
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       FORMULARIO Y MAPA
+       ============================================ -->
+  <section class="form-map-section">
+    <div class="section-container">
+      <div class="form-map-grid">
+        
+        <!-- FORMULARIO DE CONTACTO -->
+        <div class="contact-form-wrapper">
+          <div class="form-header">
+            <h2 class="form-title">Envíanos un Mensaje</h2>
+            <p class="form-description">
+              Completa el formulario y nos pondremos en contacto contigo lo antes posible
+            </p>
+          </div>
+
+          <form class="contact-form" [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+            
+            <!-- Nombre Completo -->
+            <div class="form-group">
+              <label for="nombre" class="form-label">
+                Nombre Completo <span class="required">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="nombre"
+                formControlName="nombre"
+                class="form-input"
+                [class.error]="isFieldInvalid('nombre')"
+                placeholder="Tu nombre completo"
+              >
+              <span class="error-message" *ngIf="isFieldInvalid('nombre')">
+                {{ getErrorMessage('nombre') }}
+              </span>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+              <label for="email" class="form-label">
+                Correo Electrónico <span class="required">*</span>
+              </label>
+              <input 
+                type="email" 
+                id="email"
+                formControlName="email"
+                class="form-input"
+                [class.error]="isFieldInvalid('email')"
+                placeholder="tu@email.com"
+              >
+              <span class="error-message" *ngIf="isFieldInvalid('email')">
+                {{ getErrorMessage('email') }}
+              </span>
+            </div>
+
+            <!-- Asunto -->
+            <div class="form-group">
+              <label for="asunto" class="form-label">
+                Asunto <span class="required">*</span>
+              </label>
+              <select 
+                id="asunto"
+                formControlName="asunto"
+                class="form-select"
+                [class.error]="isFieldInvalid('asunto')"
+              >
+                <option value="">Selecciona un asunto</option>
+                <option value="consulta-general">Consulta General</option>
+                <option value="compra">Información de Compra</option>
+                <option value="artista">Quiero ser Artista</option>
+                <option value="soporte">Soporte Técnico</option>
+                <option value="colaboracion">Colaboración</option>
+                <option value="otro">Otro</option>
+              </select>
+              <span class="error-message" *ngIf="isFieldInvalid('asunto')">
+                Por favor selecciona un asunto
+              </span>
+            </div>
+
+            <!-- Mensaje -->
+            <div class="form-group">
+              <label for="mensaje" class="form-label">
+                Mensaje <span class="required">*</span>
+              </label>
+              <textarea 
+                id="mensaje"
+                formControlName="mensaje"
+                class="form-textarea"
+                [class.error]="isFieldInvalid('mensaje')"
+                placeholder="Escribe tu mensaje aquí..."
+                rows="6"
+              ></textarea>
+              <span class="error-message" *ngIf="isFieldInvalid('mensaje')">
+                {{ getErrorMessage('mensaje') }}
+              </span>
+              <span class="character-count">
+                {{ contactForm.get('mensaje')?.value?.length || 0 }} / 1000 caracteres
+              </span>
+            </div>
+
+            <!-- Checkbox de Términos -->
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input 
+                  type="checkbox"
+                  formControlName="aceptoTerminos"
+                  class="form-checkbox"
+                >
+                <span class="checkbox-text">
+                  Acepto la <a routerLink="/terminos" class="link">Política de Privacidad</a> 
+                  y el uso de mis datos
+                  <span class="required">*</span>
+                </span>
+              </label>
+              <span class="error-message" *ngIf="isFieldInvalid('aceptoTerminos')">
+                Debes aceptar la política de privacidad
+              </span>
+            </div>
+
+            <!-- Botón de Envío -->
+            <button 
+              type="submit" 
+              class="btn-submit"
+              [disabled]="contactForm.invalid || isSubmitting"
+            >
+              <span *ngIf="!isSubmitting">📧 Enviar Mensaje</span>
+              <span *ngIf="isSubmitting">⏳ Enviando...</span>
+            </button>
+
+            <!-- Mensaje de éxito -->
+            <div class="success-message" *ngIf="showSuccessMessage">
+              ✅ ¡Mensaje enviado exitosamente! Te contactaremos pronto.
+            </div>
+          </form>
+        </div>
+
+        <!-- MAPA -->
+        <div class="map-wrapper">
+          <div class="map-header">
+            <h3 class="map-title">📍 Nuestra Ubicación</h3>
+            <p class="map-description">Chapulhuacán, Hidalgo, México</p>
+          </div>
+          
+          <div class="map-container">
+            <!-- Placeholder del mapa - Puedes reemplazar con Google Maps embebido -->
+            <div class="map-placeholder">
+              <div class="map-icon">🗺️</div>
+              <p class="map-text">Mapa de ubicación</p>
+              <p class="map-subtext">Chapulhuacán, Hidalgo</p>
+            </div>
+            
+            <!-- Si quieres usar Google Maps real, descomenta esto:
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d..."
+              width="100%" 
+              height="100%" 
+              style="border:0;" 
+              allowfullscreen="" 
+              loading="lazy">
+            </iframe>
+            -->
+          </div>
+
+          <!-- Redes Sociales -->
+          <div class="social-links">
+            <h4 class="social-title">Síguenos en:</h4>
+            <div class="social-buttons">
+              <a href="#" class="social-btn facebook">
+                <span class="social-icon">📘</span>
+                Facebook
+              </a>
+              <a href="#" class="social-btn instagram">
+                <span class="social-icon">📷</span>
+                Instagram
+              </a>
+              <a href="#" class="social-btn whatsapp">
+                <span class="social-icon">💬</span>
+                WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       FAQ RÁPIDO
+       ============================================ -->
+  <section class="faq-section">
+    <div class="section-container">
+      <div class="section-header center">
+        <span class="section-label">Preguntas Frecuentes</span>
+        <h2 class="section-title">¿Tienes Dudas?</h2>
+      </div>
+
+      <div class="faq-grid">
+        <div class="faq-card">
+          <div class="faq-icon">❓</div>
+          <h4 class="faq-question">¿Cuánto tardan en responder?</h4>
+          <p class="faq-answer">
+            Respondemos todos los mensajes en menos de 24 horas hábiles.
+          </p>
+        </div>
+
+        <div class="faq-card">
+          <div class="faq-icon">📦</div>
+          <h4 class="faq-question">¿Hacen envíos nacionales?</h4>
+          <p class="faq-answer">
+            Sí, enviamos a toda la República Mexicana con envío seguro.
+          </p>
+        </div>
+
+        <div class="faq-card">
+          <div class="faq-icon">💳</div>
+          <h4 class="faq-question">¿Qué métodos de pago aceptan?</h4>
+          <p class="faq-answer">
+            Aceptamos tarjetas de crédito/débito, transferencias y PayPal.
+          </p>
+        </div>
+
+        <div class="faq-card">
+          <div class="faq-icon">🎨</div>
+          <h4 class="faq-question">¿Cómo puedo vender mi arte?</h4>
+          <p class="faq-answer">
+            Contáctanos seleccionando "Quiero ser Artista" y te explicamos el proceso.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       CTA
+       ============================================ -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2 class="cta-title">¿Prefieres Hablar Directamente?</h2>
+      <p class="cta-text">Llámanos o envíanos un WhatsApp</p>
+      <div class="cta-buttons">
+        <a href="tel:+527711234567" class="btn-cta primary">
+          📞 Llamar Ahora
+        </a>
+        <a href="https://wa.me/527711234567" target="_blank" class="btn-cta secondary">
+          💬 WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+</div>

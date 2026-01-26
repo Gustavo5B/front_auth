@@ -1,0 +1,74 @@
+<div class="error-container error-500">
+  <div class="error-content">
+    <!-- Animación de error -->
+    <div class="error-animation">
+      <div class="error-icon">
+        <div class="gear gear-1">⚙️</div>
+        <div class="gear gear-2">⚙️</div>
+        <div class="warning-sign">⚠️</div>
+      </div>
+      <div class="error-circle">
+        <span class="error-number">500</span>
+      </div>
+    </div>
+
+    <!-- Contenido del error -->
+    <div class="error-text">
+      <h1>¡Algo salió mal en nuestro taller!</h1>
+      <p class="error-description">
+        Nuestros artesanos están trabajando para reparar este problema. 
+        Es un error temporal del servidor y estamos en ello.
+      </p>
+
+      <!-- Estado del sistema -->
+      <div class="system-status">
+        <div class="status-item">
+          <span class="status-icon">🔧</span>
+          <span class="status-text">Equipo notificado</span>
+        </div>
+        <div class="status-item">
+          <span class="status-icon">⏱️</span>
+          <span class="status-text">Tiempo estimado: 5-10 min</span>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="error-actions">
+        <button class="btn-primary" (click)="reloadPage()">
+          <span class="icon">🔄</span>
+          Intentar de nuevo
+        </button>
+        <button class="btn-secondary" (click)="goHome()">
+          <span class="icon">🏠</span>
+          Ir al inicio
+        </button>
+      </div>
+
+      <!-- Información adicional -->
+      <div class="error-info">
+        <details>
+          <summary>¿Qué puedes hacer mientras tanto?</summary>
+          <div class="info-content">
+            <ul>
+              <li>🔄 Refresca la página en unos minutos</li>
+              <li>🌐 Verifica tu conexión a internet</li>
+              <li>📧 Si el problema persiste, contáctanos</li>
+              <li>⏰ Guarda esta página y vuelve más tarde</li>
+            </ul>
+            <div class="error-code">
+              <small>Código de error: {{ errorCode }}</small>
+              <small>Hora: {{ errorTime }}</small>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decoración de fondo -->
+  <div class="background-decoration">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+</div>
