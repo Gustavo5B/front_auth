@@ -6,6 +6,8 @@ import { TwoFactorSetupComponent } from './pages/two-factor-setup/two-factor-set
 import { TwoFactorVerifyComponent } from './pages/two-factor-verify/two-factor-verify.component';
 import { VerifyEmailComponent } from './pages/verify-email/verify-email.component';
 import { AboutUsComponent } from './pages/about-us/about-us.component';
+import { ContactComponent } from './pages/contact/contact.component';
+import { FaqComponent } from './pages/faq/faq.component';
 
 // ✅ IMPORTAR COMPONENTES DE ERROR
 import { Error404Component } from './components/errors/error-404/error-404.component';
@@ -21,8 +23,20 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'verify-email', component: VerifyEmailComponent },
   { path: 'dashboard', component: DashboardComponent },
-   { path: 'about-us', component: AboutUsComponent },  // ← AGREGAR
-  { path: 'sobre-nosotros', redirectTo: '/about-us' }, // ← Opcional: alias en español
+  
+  // ============================================
+  // PÁGINAS INFORMATIVAS
+  // ============================================
+  { path: 'about-us', component: AboutUsComponent },
+  { path: 'sobre-nosotros', redirectTo: '/about-us' },
+  
+  { path: 'contact', component: ContactComponent },
+  { path: 'contacto', redirectTo: '/contact' },
+  
+  { path: 'faq', component: FaqComponent },
+  { path: 'preguntas-frecuentes', redirectTo: '/faq' },
+  { path: 'ayuda', redirectTo: '/faq' },
+
   // ============================================
   // AUTENTICACIÓN 2FA (TOTP)
   // ============================================

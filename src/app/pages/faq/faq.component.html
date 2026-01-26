@@ -1,0 +1,233 @@
+<div class="faq-container">
+  <!-- ============================================
+       HERO SECTION
+       ============================================ -->
+  <section class="faq-hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-label">Estamos aquí para ayudarte</span>
+      <h1 class="hero-title">Centro de Ayuda</h1>
+      <p class="hero-subtitle">
+        Encuentra respuestas rápidas a las preguntas más frecuentes
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       BUSCADOR
+       ============================================ -->
+  <section class="search-section">
+    <div class="section-container">
+      <div class="search-wrapper">
+        <div class="search-icon">🔍</div>
+        <input 
+          type="text" 
+          class="search-input"
+          [(ngModel)]="searchTerm"
+          (input)="filterQuestions()"
+          placeholder="Busca tu pregunta aquí..."
+        >
+        <span class="search-count" *ngIf="searchTerm">
+          {{ filteredCategories.length }} resultados
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       CATEGORÍAS DE PREGUNTAS
+       ============================================ -->
+  <section class="categories-section">
+    <div class="section-container">
+      
+      <!-- Mensaje si no hay resultados -->
+      <div class="no-results" *ngIf="searchTerm && filteredCategories.length === 0">
+        <div class="no-results-icon">🔍</div>
+        <h3>No encontramos resultados para "{{ searchTerm }}"</h3>
+        <p>Intenta con otras palabras clave o contáctanos directamente</p>
+        <button class="btn-contact" routerLink="/contact">
+          📧 Ir a Contacto
+        </button>
+      </div>
+
+      <!-- Categorías con preguntas -->
+      <div class="category-grid" *ngIf="!searchTerm || filteredCategories.length > 0">
+        
+        <!-- CATEGORÍA: ENVÍOS Y ENTREGAS -->
+        <div class="category-card" *ngIf="shouldShowCategory('envios')">
+          <div class="category-header" (click)="toggleCategory('envios')">
+            <div class="category-icon">📦</div>
+            <h2 class="category-title">Envíos y Entregas</h2>
+            <span class="category-arrow" [class.open]="openCategory === 'envios'">▼</span>
+          </div>
+          
+          <div class="questions-list" *ngIf="openCategory === 'envios'">
+            <div class="question-item" *ngFor="let q of getFilteredQuestions('envios')">
+              <div class="question-header" (click)="toggleQuestion(q.id)">
+                <span class="question-text">{{ q.question }}</span>
+                <span class="question-toggle" [class.open]="openQuestion === q.id">+</span>
+              </div>
+              <div class="answer-content" *ngIf="openQuestion === q.id">
+                <p [innerHTML]="q.answer"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORÍA: PAGOS Y FACTURACIÓN -->
+        <div class="category-card" *ngIf="shouldShowCategory('pagos')">
+          <div class="category-header" (click)="toggleCategory('pagos')">
+            <div class="category-icon">💳</div>
+            <h2 class="category-title">Pagos y Facturación</h2>
+            <span class="category-arrow" [class.open]="openCategory === 'pagos'">▼</span>
+          </div>
+          
+          <div class="questions-list" *ngIf="openCategory === 'pagos'">
+            <div class="question-item" *ngFor="let q of getFilteredQuestions('pagos')">
+              <div class="question-header" (click)="toggleQuestion(q.id)">
+                <span class="question-text">{{ q.question }}</span>
+                <span class="question-toggle" [class.open]="openQuestion === q.id">+</span>
+              </div>
+              <div class="answer-content" *ngIf="openQuestion === q.id">
+                <p [innerHTML]="q.answer"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORÍA: PARA ARTISTAS -->
+        <div class="category-card" *ngIf="shouldShowCategory('artistas')">
+          <div class="category-header" (click)="toggleCategory('artistas')">
+            <div class="category-icon">🎨</div>
+            <h2 class="category-title">Para Artistas</h2>
+            <span class="category-arrow" [class.open]="openCategory === 'artistas'">▼</span>
+          </div>
+          
+          <div class="questions-list" *ngIf="openCategory === 'artistas'">
+            <div class="question-item" *ngFor="let q of getFilteredQuestions('artistas')">
+              <div class="question-header" (click)="toggleQuestion(q.id)">
+                <span class="question-text">{{ q.question }}</span>
+                <span class="question-toggle" [class.open]="openQuestion === q.id">+</span>
+              </div>
+              <div class="answer-content" *ngIf="openQuestion === q.id">
+                <p [innerHTML]="q.answer"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORÍA: COMPRAS Y DEVOLUCIONES -->
+        <div class="category-card" *ngIf="shouldShowCategory('compras')">
+          <div class="category-header" (click)="toggleCategory('compras')">
+            <div class="category-icon">🛒</div>
+            <h2 class="category-title">Compras y Devoluciones</h2>
+            <span class="category-arrow" [class.open]="openCategory === 'compras'">▼</span>
+          </div>
+          
+          <div class="questions-list" *ngIf="openCategory === 'compras'">
+            <div class="question-item" *ngFor="let q of getFilteredQuestions('compras')">
+              <div class="question-header" (click)="toggleQuestion(q.id)">
+                <span class="question-text">{{ q.question }}</span>
+                <span class="question-toggle" [class.open]="openQuestion === q.id">+</span>
+              </div>
+              <div class="answer-content" *ngIf="openQuestion === q.id">
+                <p [innerHTML]="q.answer"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORÍA: CUENTA Y SEGURIDAD -->
+        <div class="category-card" *ngIf="shouldShowCategory('cuenta')">
+          <div class="category-header" (click)="toggleCategory('cuenta')">
+            <div class="category-icon">🔒</div>
+            <h2 class="category-title">Cuenta y Seguridad</h2>
+            <span class="category-arrow" [class.open]="openCategory === 'cuenta'">▼</span>
+          </div>
+          
+          <div class="questions-list" *ngIf="openCategory === 'cuenta'">
+            <div class="question-item" *ngFor="let q of getFilteredQuestions('cuenta')">
+              <div class="question-header" (click)="toggleQuestion(q.id)">
+                <span class="question-text">{{ q.question }}</span>
+                <span class="question-toggle" [class.open]="openQuestion === q.id">+</span>
+              </div>
+              <div class="answer-content" *ngIf="openQuestion === q.id">
+                <p [innerHTML]="q.answer"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORÍA: CONTACTO Y SOPORTE -->
+        <div class="category-card" *ngIf="shouldShowCategory('soporte')">
+          <div class="category-header" (click)="toggleCategory('soporte')">
+            <div class="category-icon">📧</div>
+            <h2 class="category-title">Contacto y Soporte</h2>
+            <span class="category-arrow" [class.open]="openCategory === 'soporte'">▼</span>
+          </div>
+          
+          <div class="questions-list" *ngIf="openCategory === 'soporte'">
+            <div class="question-item" *ngFor="let q of getFilteredQuestions('soporte')">
+              <div class="question-header" (click)="toggleQuestion(q.id)">
+                <span class="question-text">{{ q.question }}</span>
+                <span class="question-toggle" [class.open]="openQuestion === q.id">+</span>
+              </div>
+              <div class="answer-content" *ngIf="openQuestion === q.id">
+                <p [innerHTML]="q.answer"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       ESTADÍSTICAS RÁPIDAS
+       ============================================ -->
+  <section class="stats-section">
+    <div class="section-container">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-number">< 24h</div>
+          <div class="stat-label">Tiempo de Respuesta</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">💬</div>
+          <div class="stat-number">95%</div>
+          <div class="stat-label">Satisfacción del Cliente</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-number">30+</div>
+          <div class="stat-label">Preguntas Respondidas</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       CTA - NO ENCONTRASTE TU RESPUESTA
+       ============================================ -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <div class="cta-icon">💡</div>
+      <h2 class="cta-title">¿No Encontraste tu Respuesta?</h2>
+      <p class="cta-text">
+        Nuestro equipo está listo para ayudarte. Contáctanos y te responderemos lo antes posible.
+      </p>
+      <div class="cta-buttons">
+        <button class="btn-cta primary" routerLink="/contact">
+          📧 Enviar Mensaje
+        </button>
+        <a href="https://wa.me/527711234567" target="_blank" class="btn-cta secondary">
+          💬 WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
