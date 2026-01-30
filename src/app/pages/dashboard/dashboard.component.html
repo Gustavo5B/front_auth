@@ -3,10 +3,10 @@
        HEADER PROFESIONAL
        ============================================ -->
   <header class="header">
-  <div class="logo">
-    <img src="logo.png" alt="NU★B Logo" class="logo-image">
-    <span class="logo-text">NU★B STUDIO</span>
-  </div>
+    <div class="logo">
+      <img src="logo.png" alt="NU★B Logo" class="logo-image">
+      <span class="logo-text">NU★B STUDIO</span>
+    </div>
     
     <nav class="nav">
       <a class="nav-link" [class.active]="vistaActual === 'inicio'" (click)="cambiarVista('inicio')">
@@ -14,8 +14,6 @@
       </a>
       <a class="nav-link">Artistas</a>
       <a class="nav-link">Blog</a>
-      <a class="nav-link" routerLink="/about-us">Sobre nosotros</a>
-        <a class="nav-link" routerLink="/faq">Ayuda</a>  <!-- ✅ AGREGAR -->
       <a class="nav-link" [class.active]="vistaActual === 'seguridad'" (click)="cambiarVista('seguridad')">
         Mi cuenta
       </a>
@@ -29,6 +27,9 @@
       <button (click)="logout()" class="btn-logout">Cerrar sesión</button>
     </div>
   </header>
+
+  <!-- ✅ BREADCRUMBS (NUEVO) -->
+  <app-breadcrumbs [breadcrumbs]="breadcrumbService.getBreadcrumbs()"></app-breadcrumbs>
 
   <!-- ============================================
        VISTA: GALERÍA DE ARTE (INICIO)
@@ -47,264 +48,230 @@
     </section>
 
     <!-- ============================================
-       <!-- ============================================
-     🏆 PRODUCTO DESTACADO - OLLA DE BARRO
-     ============================================ -->
-<section class="featured-product-section">
-  <div class="section-header">
-    <span class="featured-label">✨ PIEZA DESTACADA</span>
-    <h2>Olla de Barro Artesanal</h2>
-    <p>Una pieza tradicional de la Huasteca, elaborada con técnicas ancestrales</p>
-  </div>
+         🏆 PRODUCTO DESTACADO
+         ============================================ -->
+    <section class="featured-product-section">
+      <div class="section-header">
+        <span class="featured-label">✨ PIEZA DESTACADA</span>
+        <h2>Olla de Barro Artesanal</h2>
+        <p>Una pieza tradicional de la Huasteca, elaborada con técnicas ancestrales</p>
+      </div>
 
-  <div class="featured-product-container">
-    <!-- Imagen del producto -->
-    <div class="featured-product-image">
-      <img src="OLLA.png" alt="Olla de Barro Artesanal" class="product-main-image">
-      <div class="image-badge">Vista 3D disponible</div>
+      <div class="featured-product-container">
+        <div class="featured-product-image">
+          <img src="OLLA.png" alt="Olla de Barro Artesanal" class="product-main-image">
+          <div class="image-badge">Vista 3D disponible</div>
+        </div>
+
+        <div class="featured-product-details">
+          <div class="product-category-tag">Artesanía / Barro</div>
+          <h3 class="product-title">Olla de Barro Huasteca</h3>
+          <div class="product-rating">
+            <span class="stars">⭐⭐⭐⭐⭐</span>
+            <span class="rating-text">(4.8) - 89 reseñas</span>
+          </div>
+          <p class="product-description">
+            Auténtica olla de barro elaborada a mano por artesanos de la región Huasteca. 
+            Perfecta para cocinar frijoles, mole y platillos tradicionales que adquieren 
+            un sabor único.
+          </p>
+          <div class="product-specs">
+            <div class="spec-item">
+              <span class="spec-icon">📏</span>
+              <span class="spec-text">Capacidad: 3 litros</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-icon">⚖️</span>
+              <span class="spec-text">Peso: 1.5 kg</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-icon">🔥</span>
+              <span class="spec-text">Apta para fuego directo</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-icon">📦</span>
+              <span class="spec-text">Envío protegido</span>
+            </div>
+          </div>
+          <div class="product-price-section">
+            <span class="price-label">Precio especial:</span>
+            <div class="price-container">
+              <span class="original-price">$850.00</span>
+              <span class="current-price">$650.00</span>
+            </div>
+            <span class="discount-badge">-24% OFF</span>
+          </div>
+          <div class="product-actions">
+            <button class="btn-buy-now" (click)="comprarProducto()">
+              🛒 Comprar Ahora
+            </button>
+            <button class="btn-add-wishlist">
+              ❤️ Añadir a favoritos
+            </button>
+          </div>
+          <div class="view-3d-section">
+            <button class="btn-view-3d" (click)="mostrarQR()">
+              <span class="btn-3d-icon">📱</span>
+              <span class="btn-3d-text">Ver en 3D / Realidad Aumentada</span>
+            </button>
+            <p class="view-3d-hint">Escanea el código QR para ver esta pieza en tu espacio</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal QR -->
+    <div class="modal-overlay" *ngIf="mostrarModalQR" (click)="cerrarModalQR()">
+      <div class="modal-qr" (click)="$event.stopPropagation()">
+        <button class="modal-close" (click)="cerrarModalQR()">✕</button>
+        <div class="modal-header">
+          <h3>📱 Ver en 3D / Realidad Aumentada</h3>
+          <p>Escanea el código QR con tu teléfono</p>
+        </div>
+        <div class="qr-container">
+          <img src="qr-jarron-3d.png" alt="Código QR para ver en 3D" class="qr-image">
+        </div>
+        <div class="qr-instructions">
+          <div class="instruction-step">
+            <span class="step-number">1</span>
+            <span class="step-text">Abre la cámara de tu teléfono</span>
+          </div>
+          <div class="instruction-step">
+            <span class="step-number">2</span>
+            <span class="step-text">Apunta al código QR</span>
+          </div>
+          <div class="instruction-step">
+            <span class="step-number">3</span>
+            <span class="step-text">Toca el enlace que aparece</span>
+          </div>
+          <div class="instruction-step">
+            <span class="step-number">4</span>
+            <span class="step-text">¡Visualiza el jarrón en 3D!</span>
+          </div>
+        </div>
+        <a href="https://sketchfab.com/search?q=jarron&type=models" target="_blank" class="btn-open-3d">
+          🌐 Abrir en navegador
+        </a>
+      </div>
     </div>
 
-    <!-- Detalles del producto -->
-    <div class="featured-product-details">
-      <div class="product-category-tag">Artesanía / Barro</div>
-      
-      <h3 class="product-title">Olla de Barro Huasteca</h3>
-      
-      <div class="product-rating">
-        <span class="stars">⭐⭐⭐⭐⭐</span>
-        <span class="rating-text">(4.8) - 89 reseñas</span>
-      </div>
-
-      <p class="product-description">
-        Auténtica olla de barro elaborada a mano por artesanos de la región Huasteca. 
-        Perfecta para cocinar frijoles, mole y platillos tradicionales que adquieren 
-        un sabor único. Cada pieza es única, con acabados rústicos que reflejan 
-        la tradición y cultura de nuestra región.
-      </p>
-
-      <div class="product-specs">
-        <div class="spec-item">
-          <span class="spec-icon">📏</span>
-          <span class="spec-text">Capacidad: 3 litros</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-icon">⚖️</span>
-          <span class="spec-text">Peso: 1.5 kg</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-icon">🔥</span>
-          <span class="spec-text">Apta para fuego directo</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-icon">📦</span>
-          <span class="spec-text">Envío protegido</span>
-        </div>
-      </div>
-
-      <div class="product-price-section">
-        <span class="price-label">Precio especial:</span>
-        <div class="price-container">
-          <span class="original-price">$850.00</span>
-          <span class="current-price">$650.00</span>
-        </div>
-        <span class="discount-badge">-24% OFF</span>
-      </div>
-
-      <div class="product-actions">
-        <button class="btn-buy-now" (click)="comprarProducto()">
-          🛒 Comprar Ahora
-        </button>
-        <button class="btn-add-wishlist">
-          ❤️ Añadir a favoritos
-        </button>
-      </div>
-
-      <!-- Botón QR para ver en 3D -->
-      <div class="view-3d-section">
-        <button class="btn-view-3d" (click)="mostrarQR()">
-          <span class="btn-3d-icon">📱</span>
-          <span class="btn-3d-text">Ver en 3D / Realidad Aumentada</span>
-        </button>
-        <p class="view-3d-hint">Escanea el código QR para ver esta pieza en tu espacio</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-   <!-- Modal QR -->
-<div class="modal-overlay" *ngIf="mostrarModalQR" (click)="cerrarModalQR()">
-  <div class="modal-qr" (click)="$event.stopPropagation()">
-    <button class="modal-close" (click)="cerrarModalQR()">✕</button>
+    <!-- ============================================
+         🔀 INVERTIDO: PRIMERO FILTROS, LUEGO TÍTULO
+         ============================================ -->
     
-    <div class="modal-header">
-      <h3>📱 Ver en 3D / Realidad Aumentada</h3>
-      <p>Escanea el código QR con tu teléfono</p>
-    </div>
+        <!-- TÍTULO Y GRID DE OBRAS -->
+    <section class="featured-section">
+      <!-- ✅ TÍTULO DESPUÉS DE FILTROS -->
+      <div class="section-header">
+        <h2>{{ categoriaSeleccionada ? 'Obras Filtradas' : 'Galería de Obras' }}</h2>
+        <p *ngIf="!categoriaSeleccionada">Selección especial de creaciones que capturan la esencia de nuestra región</p>
+      </div>
 
-    <div class="qr-container">
-      <img src="qr-jarron-3d.png" alt="Código QR para ver en 3D" class="qr-image">
-    </div>
 
-    <div class="qr-instructions">
-      <div class="instruction-step">
-        <span class="step-number">1</span>
-        <span class="step-text">Abre la cámara de tu teléfono</span>
-      </div>
-      <div class="instruction-step">
-        <span class="step-number">2</span>
-        <span class="step-text">Apunta al código QR</span>
-      </div>
-      <div class="instruction-step">
-        <span class="step-number">3</span>
-        <span class="step-text">Toca el enlace que aparece</span>
-      </div>
-      <div class="instruction-step">
-        <span class="step-number">4</span>
-        <span class="step-text">¡Visualiza el jarrón en 3D!</span>
-      </div>
-    </div>
-
-    <a href="https://sketchfab.com/search?q=jarron&type=models" target="_blank" class="btn-open-3d">
-      🌐 Abrir en navegador
-    </a>
-  </div>
-</div>
-    <!-- Filtros y Búsqueda -->
+    <!-- FILTROS Y BÚSQUEDA -->
     <section class="filters-section">
       <div class="search-bar">
-        <input type="text" placeholder="Buscar por título, artista..." class="search-input">
-        <button class="search-btn">Buscar</button>
+        <input 
+          type="text" 
+          placeholder="Buscar por título, artista..." 
+          class="search-input"
+          [(ngModel)]="terminoBusqueda"
+          (keyup.enter)="buscarObras()">
+        <button class="search-btn" (click)="buscarObras()">Buscar</button>
       </div>
 
       <div class="filters">
-        <button class="filter-btn active">Todos</button>
-        <button class="filter-btn">Fotografías</button>
-        <button class="filter-btn">Pintura</button>
-        <button class="filter-btn">Escultura</button>
-        <button class="filter-btn">Artesanías</button>
+        <button 
+          class="filter-btn" 
+          [class.active]="categoriaSeleccionada === null"
+          (click)="filtrarPorCategoria(null)">
+          Todos
+        </button>
+        <button 
+          *ngFor="let categoria of categorias"
+          class="filter-btn" 
+          [class.active]="categoriaSeleccionada === categoria.id_categoria"
+          (click)="filtrarPorCategoria(categoria.id_categoria)">
+          {{ categoria.nombre }}
+          <span class="badge-count" *ngIf="categoria.total_obras">({{ categoria.total_obras }})</span>
+        </button>
       </div>
 
       <div class="price-range">
         <span>Rango de precio:</span>
-        <select class="price-select">
+        <select class="price-select" (change)="filtrarPorPrecio($event)">
           <option value="">Todos los precios</option>
           <option value="0-1000">$0 - $1,000</option>
           <option value="1000-3000">$1,000 - $3,000</option>
           <option value="3000+">$3,000+</option>
         </select>
-        <span class="price-display">$1500.00</span>
+        <span class="results-count" *ngIf="totalObras > 0">
+          {{ totalObras }} {{ totalObras === 1 ? 'obra' : 'obras' }}
+        </span>
       </div>
     </section>
 
-    <!-- Obras Destacadas -->
-    <section class="featured-section">
-      <div class="section-header">
-        <h2>Más Obras de la Galería</h2>
-        <p>Selección especial de creaciones que capturan la esencia de nuestra región</p>
+
+      <!-- Estado de carga -->
+      <div *ngIf="cargandoObras" class="loading-state">
+        <div class="spinner"></div>
+        <p>Cargando obras...</p>
       </div>
 
-      <div class="art-grid">
-        <!-- Obra 1: Fotografía -->
-        <div class="art-card">
+      <!-- Error -->
+      <div *ngIf="errorCarga" class="error-state">
+        <p>{{ errorCarga }}</p>
+        <button class="btn-retry" (click)="cargarObras()">Reintentar</button>
+      </div>
+
+      <!-- Grid de obras -->
+      <div class="art-grid" *ngIf="!cargandoObras && !errorCarga">
+        <div class="art-card" *ngFor="let obra of obras">
           <div class="art-badge disponible">Disponible</div>
-          <div class="art-image" style="background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);">
-            <div class="art-icon">📷</div>
+          <div 
+            class="art-image" 
+            [style.background-image]="'url(' + obra.imagen_principal + ')'"
+            [style.background-size]="'cover'"
+            [style.background-position]="'center'">
           </div>
           <div class="art-info">
-            <span class="art-category">Fotografía</span>
-            <h3 class="art-title">Atardecer Urbano</h3>
-            <p class="art-artist">Por María González</p>
+            <span class="art-category">{{ obra.categoria_nombre }}</span>
+            <h3 class="art-title">{{ obra.titulo }}</h3>
+            <p class="art-artist">Por {{ obra.artista_alias || obra.artista }}</p>
             <div class="art-footer">
-              <span class="art-price">$1,400.00</span>
-              <button class="btn-add-cart">Agregar al carrito</button>
+              <span class="art-price">${{ obra.precio_minimo | number:'1.2-2' }}</span>
+              <button class="btn-add-cart" (click)="agregarAlCarrito(obra)">
+                Agregar al carrito
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- Obra 2: Pintura -->
-        <div class="art-card">
-          <div class="art-badge disponible">Disponible</div>
-          <div class="art-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-            <div class="art-icon">🎨</div>
-          </div>
-          <div class="art-info">
-            <span class="art-category">Pintura</span>
-            <h3 class="art-title">Naturaleza Abstracta</h3>
-            <p class="art-artist">Por Carlos Ruiz</p>
-            <div class="art-footer">
-              <span class="art-price">$1,400.00</span>
-              <button class="btn-add-cart">Agregar al carrito</button>
-            </div>
-          </div>
+        <div *ngIf="obras.length === 0" class="no-results">
+          <p>No se encontraron obras con los filtros seleccionados</p>
+          <button class="btn-clear-filters" (click)="filtrarPorCategoria(null)">
+            Limpiar filtros
+          </button>
         </div>
+      </div>
 
-        <!-- Obra 3: Escultura -->
-        <div class="art-card">
-          <div class="art-badge disponible">Disponible</div>
-          <div class="art-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-            <div class="art-icon">🗿</div>
-          </div>
-          <div class="art-info">
-            <span class="art-category">Escultura</span>
-            <h3 class="art-title">Forma y Espacio</h3>
-            <p class="art-artist">Por María González</p>
-            <div class="art-footer">
-              <span class="art-price">$1,400.00</span>
-              <button class="btn-add-cart">Agregar al carrito</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Obra 4: Artesanías -->
-        <div class="art-card">
-          <div class="art-badge disponible">Disponible</div>
-          <div class="art-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-            <div class="art-icon">🧵</div>
-          </div>
-          <div class="art-info">
-            <span class="art-category">Artesanía</span>
-            <h3 class="art-title">Texturas Mexicanas</h3>
-            <p class="art-artist">Por Roberto López</p>
-            <div class="art-footer">
-              <span class="art-price">$1,400.00</span>
-              <button class="btn-add-cart">Agregar al carrito</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Obra 5 -->
-        <div class="art-card">
-          <div class="art-badge disponible">Disponible</div>
-          <div class="art-image" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
-            <div class="art-icon">🌄</div>
-          </div>
-          <div class="art-info">
-            <span class="art-category">Fotografía</span>
-            <h3 class="art-title">Amanecer Huasteco</h3>
-            <p class="art-artist">Por Ana Martínez</p>
-            <div class="art-footer">
-              <span class="art-price">$2,566</span>
-              <button class="btn-add-cart">Agregar al carrito</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Obra 6 -->
-        <div class="art-card">
-          <div class="art-badge disponible">Disponible</div>
-          <div class="art-image" style="background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);">
-            <div class="art-icon">🖼️</div>
-          </div>
-          <div class="art-info">
-            <span class="art-category">Pintura</span>
-            <h3 class="art-title">Tradición Viva</h3>
-            <p class="art-artist">Por Luis Hernández</p>
-            <div class="art-footer">
-              <span class="art-price">$2,566</span>
-              <button class="btn-add-cart">Agregar al carrito</button>
-            </div>
-          </div>
-        </div>
+      <!-- Paginación -->
+      <div class="pagination" *ngIf="totalPaginas > 1 && !cargandoObras">
+        <button 
+          class="btn-page" 
+          [disabled]="paginaActual === 1"
+          (click)="cambiarPagina(paginaActual - 1)">
+          ← Anterior
+        </button>
+        <span class="page-info">
+          Página {{ paginaActual }} de {{ totalPaginas }}
+        </span>
+        <button 
+          class="btn-page" 
+          [disabled]="paginaActual === totalPaginas"
+          (click)="cambiarPagina(paginaActual + 1)">
+          Siguiente →
+        </button>
       </div>
     </section>
   </main>
@@ -326,7 +293,6 @@
     </div>
 
     <div class="security-grid">
-      <!-- Opción 1: TOTP -->
       <div class="security-card" (click)="configurar2FA()">
         <div class="security-icon">📱</div>
         <h3>Aplicación Autenticadora</h3>
@@ -335,7 +301,6 @@
         <button class="btn-configure">Configurar</button>
       </div>
 
-      <!-- Opción 2: Email -->
       <div class="security-card" (click)="configurarEmail2FA()">
         <div class="security-icon">📧</div>
         <h3>Correo Electrónico</h3>
@@ -351,7 +316,6 @@
         <button class="btn-configure">Configurar</button>
       </div>
 
-      <!-- 🔥 OPCIÓN 3: CERRAR OTRAS SESIONES -->
       <div class="security-card" (click)="cerrarOtrasSesiones()">
         <div class="security-icon">🔥</div>
         <h3>Cerrar otras sesiones</h3>
@@ -360,7 +324,6 @@
         <button class="btn-configure">Cerrar sesiones</button>
       </div>
 
-      <!-- Opción 4: Sin 2FA -->
       <div class="security-card">
         <div class="security-icon">⏭️</div>
         <h3>Omitir por ahora</h3>
@@ -369,26 +332,37 @@
         <button class="btn-configure secondary" (click)="cambiarVista('inicio')">Volver</button>
       </div>
     </div>
-
-    
   </main>
- <!-- ============================================
-       🧪 BOTONES DE PRUEBA - PÁGINAS DE ERROR (TEMPORAL)
-       ============================================ -->
-  <div class="test-buttons-container">
-    <button class="test-btn test-404" (click)="testError(404)">
-      🔍 Probar 404
-    </button>
-    <button class="test-btn test-403" (click)="testError(403)">
-      🔒 Probar 403
-    </button>
-    <button class="test-btn test-500" (click)="testError(500)">
-      ⚠️ Probar 500
-    </button>
+
+  <!-- ============================================
+     FOOTER MEJORADO CON ESTRUCTURA PROFESIONAL
+     ============================================ -->
+  <footer class="footer">
+  <div class="footer-content">
+    <div class="footer-brand">
+      <h3>NU★B STUDIO</h3>
+      <p>Galería de arte regional de la Huasteca Hidalguense</p>
+    </div>
+
+    <nav class="footer-links">
+      <a routerLink="/dashboard" class="footer-link">Galería</a>
+      <span class="footer-separator"> • </span>
+      <a routerLink="/about-us" class="footer-link">Nosotros</a>
+      <span class="footer-separator"> • </span>
+      <a routerLink="/faq" class="footer-link">Ayuda</a>
+      <span class="footer-separator"> • </span>
+      <a routerLink="/obra/nueva" class="footer-link">+ Agregar Obra</a>
+      <span class="footer-separator"> • </span>
+      <a (click)="testError(404)" class="footer-link dev" style="cursor: pointer;">404</a>
+      <span class="footer-separator"> • </span>
+      <a (click)="testError(403)" class="footer-link dev" style="cursor: pointer;">403</a>
+      <span class="footer-separator"> • </span>
+      <a (click)="testError(500)" class="footer-link dev" style="cursor: pointer;">500</a>
+    </nav>
   </div>
 
-  <!-- Footer -->
-  <footer class="footer">
-  <p>© 2025 NU★B STUDIO. Todos los derechos reservados.</p>
+  <div class="footer-copyright">
+    <p>© 2025 NU★B STUDIO — Hecho con ❤️ en Huejutla, Hidalgo</p>
+  </div>
 </footer>
 </div>

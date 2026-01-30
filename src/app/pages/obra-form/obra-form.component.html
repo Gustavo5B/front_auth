@@ -1,0 +1,186 @@
+<div class="form-container">
+  <div class="form-header">
+    <h1>{{ modoEdicion ? 'Editar Obra' : 'Crear Nueva Obra' }}</h1>
+    <p>{{ modoEdicion ? 'Actualiza la información de la obra' : 'Completa todos los campos para agregar una nueva obra a la galería' }}</p>
+  </div>
+
+  <form [formGroup]="obraForm" (ngSubmit)="guardarObra()" class="obra-form">
+    
+    <!-- ============================================
+         📸 IMAGEN PRINCIPAL
+         ============================================ -->
+    <div class="form-section">
+      <h3>Imagen Principal</h3>
+      
+      <div class="image-upload-area">
+        <div class="image-preview" *ngIf="imagenPreview">
+          <img [src]="imagenPreview" alt="Preview">
+          <button type="button" class="btn-remove-image" (click)="imagenPreview = null; imagenSeleccionada = null">
+            ✕ Eliminar
+          </button>
+        </div>
+        
+        <div class="upload-placeholder" *ngIf="!imagenPreview">
+          <span class="upload-icon">📸</span>
+          <p>Haz click para seleccionar una imagen</p>
+          <small>JPG, PNG o WEBP - Máximo 5MB</small>
+        </div>
+        
+        <input 
+          type="file" 
+          accept="image/jpeg,image/jpg,image/png,image/webp"
+          (change)="onImagenSeleccionada($event)"
+          class="file-input">
+      </div>
+    </div>
+
+    <!-- ============================================
+         📝 INFORMACIÓN BÁSICA
+         ============================================ -->
+    <div class="form-section">
+      <h3>Información Básica</h3>
+
+      <!-- Título -->
+      <div class="form-group">
+        <label for="titulo">
+          Título de la Obra <span class="required">*</span>
+        </label>
+        <input 
+          type="text" 
+          id="titulo"
+          formControlName="titulo"
+          placeholder="Ej: Atardecer en Huejutla"
+          [class.invalid]="titulo?.invalid && titulo?.touched">
+        
+        <div class="error-message" *ngIf="titulo?.invalid && titulo?.touched">
+          <span *ngIf="titulo?.errors?.['required']">El título es obligatorio</span>
+          <span *ngIf="titulo?.errors?.['minlength']">El título debe tener al menos 3 caracteres</span>
+          <span *ngIf="titulo?.errors?.['maxlength']">El título no puede exceder 200 caracteres</span>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="form-group">
+        <label for="descripcion">
+          Descripción <span class="required">*</span>
+        </label>
+        <textarea 
+          id="descripcion"
+          formControlName="descripcion"
+          rows="5"
+          placeholder="Describe la obra, su inspiración, técnica utilizada..."
+          [class.invalid]="descripcion?.invalid && descripcion?.touched"></textarea>
+        
+        <div class="error-message" *ngIf="descripcion?.invalid && descripcion?.touched">
+          <span *ngIf="descripcion?.errors?.['required']">La descripción es obligatoria</span>
+          <span *ngIf="descripcion?.errors?.['minlength']">La descripción debe tener al menos 10 caracteres</span>
+          <span *ngIf="descripcion?.errors?.['maxlength']">La descripción no puede exceder 1000 caracteres</span>
+        </div>
+        <small class="char-counter">{{ descripcion?.value?.length || 0 }} / 1000 caracteres</small>
+      </div>
+
+      <!-- Categoría y Artista (en fila) -->
+      <div class="form-row">
+        <!-- Categoría -->
+        <div class="form-group">
+          <label for="categoria">
+            Categoría <span class="required">*</span>
+          </label>
+          <select 
+            id="categoria"
+            formControlName="id_categoria"
+            [class.invalid]="id_categoria?.invalid && id_categoria?.touched">
+            <option value="">Selecciona una categoría</option>
+            <option *ngFor="let cat of categorias" [value]="cat.id_categoria">
+              {{ cat.nombre }}
+            </option>
+          </select>
+          
+          <div class="error-message" *ngIf="id_categoria?.invalid && id_categoria?.touched">
+            <span>Debes seleccionar una categoría</span>
+          </div>
+        </div>
+
+        <!-- Artista -->
+        <div class="form-group">
+          <label for="artista">
+            Artista <span class="required">*</span>
+          </label>
+          <select 
+            id="artista"
+            formControlName="id_artista"
+            [class.invalid]="id_artista?.invalid && id_artista?.touched">
+            <option value="">Selecciona un artista</option>
+            <option *ngFor="let artista of artistas" [value]="artista.id_artista">
+              {{ artista.nombre_artistico }}
+            </option>
+          </select>
+          
+          <div class="error-message" *ngIf="id_artista?.invalid && id_artista?.touched">
+            <span>Debes seleccionar un artista</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Año y Técnica (en fila) -->
+      <div class="form-row">
+        <!-- Año de Creación -->
+        <div class="form-group">
+          <label for="anio">Año de Creación</label>
+          <input 
+            type="number" 
+            id="anio"
+            formControlName="anio_creacion"
+            placeholder="2024"
+            [class.invalid]="anio_creacion?.invalid && anio_creacion?.touched">
+          
+          <div class="error-message" *ngIf="anio_creacion?.invalid && anio_creacion?.touched">
+            <span *ngIf="anio_creacion?.errors?.['min']">El año debe ser mayor a 1900</span>
+            <span *ngIf="anio_creacion?.errors?.['max']">El año no puede ser mayor al actual</span>
+          </div>
+        </div>
+
+        <!-- Técnica -->
+        <div class="form-group">
+          <label for="tecnica">Técnica</label>
+          <select 
+            id="tecnica"
+            formControlName="tecnica">
+            <option value="">Selecciona una técnica</option>
+            <option *ngFor="let tecnica of tecnicas" [value]="tecnica">
+              {{ tecnica }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Destacada -->
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="destacada">
+          <span class="checkbox-text">
+            <strong>Marcar como obra destacada</strong>
+            <small>Las obras destacadas aparecen en la página principal</small>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- ============================================
+         🔘 BOTONES DE ACCIÓN
+         ============================================ -->
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="cancelar()" [disabled]="enviando">
+        Cancelar
+      </button>
+      <button type="submit" class="btn-submit" [disabled]="enviando || subiendoImagen">
+        <span *ngIf="!enviando && !subiendoImagen">
+          {{ modoEdicion ? '✓ Actualizar Obra' : '+ Crear Obra' }}
+        </span>
+        <span *ngIf="enviando || subiendoImagen" class="loading">
+          ⏳ {{ subiendoImagen ? 'Subiendo imagen...' : 'Guardando...' }}
+        </span>
+      </button>
+    </div>
+  </form>
+</div>

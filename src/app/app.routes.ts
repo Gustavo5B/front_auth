@@ -8,6 +8,8 @@ import { VerifyEmailComponent } from './pages/verify-email/verify-email.componen
 import { AboutUsComponent } from './pages/about-us/about-us.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { FaqComponent } from './pages/faq/faq.component';
+import { ObraFormComponent } from './pages/obra-form/obra-form.component';
+
 
 // ✅ IMPORTAR COMPONENTES DE ERROR
 import { Error404Component } from './components/errors/error-404/error-404.component';
@@ -80,6 +82,18 @@ export const routes: Routes = [
     path: 'reset-password',
     loadComponent: () => import('./pages/reset-password/reset-password.component')
       .then(m => m.ResetPasswordComponent)
+  },
+
+    // ============================================
+  // GESTIÓN DE OBRAS
+  // ============================================
+  { 
+    path: 'obra/nueva', 
+    component: ObraFormComponent 
+  },
+  { 
+    path: 'obra/editar/:id', 
+    component: ObraFormComponent 
   },
 
   // ============================================

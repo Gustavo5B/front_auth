@@ -6,28 +6,26 @@ import { catchError, throwError } from 'rxjs';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   
-  // ✅ RUTAS QUE NO NECESITAN TOKEN (PÁGINAS PÚBLICAS)
+  // ✅ RUTAS QUE NO NECESITAN TOKEN
   const publicUrls = [
-    '/login',
-    '/register',
-    '/forgot-password',
-    '/verify-email',
-    '/verify-recovery-code',
-    '/reset-password',
-    '/404',
-    '/403',
-    '/500'
+    '/auth/login',
+    '/auth/register',
+    '/auth/forgot-password',
+    '/auth/verify-email',
+    '/auth/verify-recovery-code',
+    '/auth/reset-password'
   ];
   
-  // Verificar si la URL actual es pública
-  const currentPath = window.location.pathname;
-  const isPublicUrl = publicUrls.some(url => currentPath.includes(url));
+  // Verificar si la petición es a una URL pública
+  const isPublicRequest = publicUrls.some(url => req.url.includes(url));
   
-  // Obtener token del localStorage
+  // Obtener token
   const token = localStorage.getItem('access_token');
   
-  // ✅ Clonar request y agregar token SOLO si NO es ruta pública
-  if (token && !isPublicUrl) {
+  // ✅ Agregar token SOLO si:
+  // 1. Existe el token
+  // 2. NO es una petición pública
+  if (token && !isPublicRequest) {
     req = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`
@@ -35,61 +33,52 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
   
-  // Manejar la respuesta y errores
+  // Manejar respuesta
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
+      const currentPath = window.location.pathname;
       
-      // ⚠️ NO REDIRIGIR SI ESTAMOS EN UNA PÁGINA DE ERROR
-      if (currentPath.includes('/404') || 
-          currentPath.includes('/403') || 
-          currentPath.includes('/500')) {
+      // ⚠️ NO REDIRIGIR si ya estamos en páginas de error o login
+      const skipRedirect = ['/404', '/403', '/500', '/login'].some(
+        path => currentPath.includes(path)
+      );
+      
+      if (skipRedirect) {
         return throwError(() => error);
       }
       
-      // ============================================
       // 🔐 ERRORES DE AUTENTICACIÓN (401)
-      // ============================================
       if (error.status === 401) {
         const errorCode = error.error?.code;
         
-        // Sesión revocada o expirada
-        if (errorCode === 'SESSION_REVOKED') {
-          console.log('❌ Sesión revocada detectada por interceptor');
+        if (errorCode === 'SESSION_REVOKED' || errorCode === 'TOKEN_EXPIRED') {
+          console.log('❌ Sesión expirada');
+          localStorage.clear();
+          router.navigate(['/login'], { 
+            queryParams: { reason: 'session_expired' } 
+          });
+        } else if (!isPublicRequest) {
+          // Solo redirigir si NO es una petición de login/registro
+          console.log('❌ No autorizado');
           localStorage.clear();
           router.navigate(['/login']);
-        } 
-        else if (errorCode === 'TOKEN_EXPIRED') {
-          alert('⏰ Tu sesión ha expirado.\n\nPor favor inicia sesión nuevamente.');
-          localStorage.clear();
-          router.navigate(['/login']);
-        }
-        // Cualquier otro 401 sin código específico
-        else {
-          console.log('❌ Error de autenticación (401)');
-          router.navigate(['/403']);
         }
       }
       
-      // ============================================
       // 🚫 ACCESO DENEGADO (403)
-      // ============================================
       else if (error.status === 403) {
-        console.log('❌ Acceso denegado (403)');
+        console.log('❌ Acceso denegado');
         router.navigate(['/403']);
       }
       
-      // ============================================
       // 🔍 NO ENCONTRADO (404)
-      // ============================================
       else if (error.status === 404) {
-        console.log('❌ Recurso no encontrado (404)');
-        // Solo redirigir si es un endpoint crítico
-        // router.navigate(['/404']); // Descomenta si quieres redirigir
+        console.error('❌ Endpoint no encontrado:', req.url);
+        // NO redirigir automáticamente para 404 de API
+        // Deja que el componente maneje el error
       }
       
-      // ============================================
       // ⚠️ ERROR DEL SERVIDOR (500+)
-      // ============================================
       else if (error.status >= 500) {
         console.error('❌ Error del servidor:', error.status);
         router.navigate(['/500']);

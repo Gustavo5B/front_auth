@@ -1,15 +1,20 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { InactivityService } from '../../services/inactivity.service';
+import { ObrasService } from '../../services/obras.service';
+import { CategoriasService } from '../../services/categorias.service';
+import { BreadcrumbService } from '../../services/breadcrumb.service';
+import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { interval, Subscription } from 'rxjs';
 import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule,BreadcrumbsComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -20,10 +25,36 @@ export class DashboardComponent implements OnInit, OnDestroy {
   mostrarModalQR: boolean = false;
   private sessionCheckSubscription?: Subscription;
 
+  // =========================================================
+  // 🎨 DATOS DEL CATÁLOGO
+  // =========================================================
+  obras: any[] = [];
+  obrasDestacadas: any[] = [];
+  categorias: any[] = [];
+  obraDestacadaPrincipal: any = null;
+  
+  // Filtros
+  terminoBusqueda: string = '';
+  categoriaSeleccionada: number | null = null;
+  precioMin: number | null = null;
+  precioMax: number | null = null;
+  
+  // Paginación
+  paginaActual: number = 1;
+  totalPaginas: number = 1;
+  totalObras: number = 0;
+  
+  // Estado de carga
+  cargandoObras: boolean = false;
+  errorCarga: string | null = null;
+
   constructor(
     public authService: AuthService,
     private router: Router,
-    private inactivityService: InactivityService
+    private inactivityService: InactivityService,
+    private obrasService: ObrasService,
+    private categoriasService: CategoriasService,
+    public breadcrumbService: BreadcrumbService
   ) { }
 
   ngOnInit(): void {
@@ -40,6 +71,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.cargarDatosUsuario();
     this.startSessionCheck();
+    
+    // ✅ CARGAR DATOS DEL CATÁLOGO
+    this.cargarCategorias();
+    this.cargarObrasDestacadas();
+    this.cargarObras();
   }
 
   ngOnDestroy(): void {
@@ -92,6 +128,180 @@ export class DashboardComponent implements OnInit, OnDestroy {
       alert('Error al cargar tus datos. Por favor, inicia sesión nuevamente.');
       this.authService.logout();
     }
+  }
+
+  // =========================================================
+  // 📂 CARGAR CATEGORÍAS
+  // =========================================================
+  cargarCategorias(): void {
+    this.categoriasService.listarCategorias().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.categorias = response.data;
+          console.log('✅ Categorías cargadas:', this.categorias);
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar categorías:', error);
+      }
+    });
+  }
+
+  // =========================================================
+  // 🌟 CARGAR OBRAS DESTACADAS
+  // =========================================================
+  cargarObrasDestacadas(): void {
+    this.obrasService.obtenerObrasDestacadas().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.obrasDestacadas = response.data;
+          
+          // Primera obra destacada es la principal
+          if (this.obrasDestacadas.length > 0) {
+            this.obraDestacadaPrincipal = this.obrasDestacadas[0];
+          }
+          
+          console.log('✅ Obras destacadas cargadas:', this.obrasDestacadas);
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar obras destacadas:', error);
+      }
+    });
+  }
+
+  // =========================================================
+  // 📚 CARGAR OBRAS (CON FILTROS)
+  // =========================================================
+  cargarObras(): void {
+    this.cargandoObras = true;
+    this.errorCarga = null;
+
+    const filtros: any = {
+      page: this.paginaActual,
+      limit: 12
+    };
+
+    if (this.categoriaSeleccionada) {
+      filtros.categoria = this.categoriaSeleccionada;
+    }
+    if (this.precioMin) {
+      filtros.precio_min = this.precioMin;
+    }
+    if (this.precioMax) {
+      filtros.precio_max = this.precioMax;
+    }
+
+    this.obrasService.listarObras(filtros).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.obras = response.data;
+          this.totalObras = response.pagination.total;
+          this.totalPaginas = response.pagination.totalPages;
+          this.paginaActual = response.pagination.page;
+          
+          console.log('✅ Obras cargadas:', this.obras);
+          console.log('📊 Paginación:', response.pagination);
+        }
+        this.cargandoObras = false;
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar obras:', error);
+        this.errorCarga = 'No se pudieron cargar las obras. Intenta de nuevo.';
+        this.cargandoObras = false;
+      }
+    });
+  }
+
+  // =========================================================
+  // 🔍 BUSCAR OBRAS
+  // =========================================================
+  buscarObras(): void {
+    if (!this.terminoBusqueda || this.terminoBusqueda.trim().length < 2) {
+      alert('Por favor ingresa al menos 2 caracteres para buscar');
+      return;
+    }
+
+    this.cargandoObras = true;
+
+    this.obrasService.buscarObras(this.terminoBusqueda.trim(), this.paginaActual).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.obras = response.data;
+          this.totalObras = response.search.total;
+          this.totalPaginas = response.pagination.totalPages;
+          
+          console.log(`✅ Búsqueda: "${this.terminoBusqueda}" - ${this.totalObras} resultados`);
+        }
+        this.cargandoObras = false;
+      },
+      error: (error) => {
+        console.error('❌ Error en búsqueda:', error);
+        this.errorCarga = 'Error al buscar obras';
+        this.cargandoObras = false;
+      }
+    });
+  }
+
+  // =========================================================
+  // 📂 FILTRAR POR CATEGORÍA
+  // =========================================================
+  filtrarPorCategoria(idCategoria: number | null): void {
+    this.categoriaSeleccionada = idCategoria;
+    this.paginaActual = 1;
+    this.cargarObras();
+  }
+
+  // =========================================================
+  // 💰 FILTRAR POR RANGO DE PRECIO
+  // =========================================================
+  filtrarPorPrecio(evento: any): void {
+    const rango = evento.target.value;
+    
+    if (!rango) {
+      this.precioMin = null;
+      this.precioMax = null;
+    } else if (rango === '0-1000') {
+      this.precioMin = 0;
+      this.precioMax = 1000;
+    } else if (rango === '1000-3000') {
+      this.precioMin = 1000;
+      this.precioMax = 3000;
+    } else if (rango === '3000+') {
+      this.precioMin = 3000;
+      this.precioMax = null;
+    }
+    
+    this.paginaActual = 1;
+    this.cargarObras();
+  }
+
+  // =========================================================
+  // 📄 CAMBIAR PÁGINA
+  // =========================================================
+  cambiarPagina(pagina: number): void {
+    if (pagina < 1 || pagina > this.totalPaginas) return;
+    this.paginaActual = pagina;
+    this.cargarObras();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // =========================================================
+  // 🛒 AGREGAR AL CARRITO
+  // =========================================================
+  agregarAlCarrito(obra: any): void {
+    console.log('🛒 Agregando al carrito:', obra);
+    alert(`"${obra.titulo}" agregado al carrito`);
+    // TODO: Implementar lógica real del carrito
+  }
+
+  // =========================================================
+  // ❤️ AGREGAR A FAVORITOS
+  // =========================================================
+  agregarAFavoritos(obra: any): void {
+    console.log('❤️ Agregando a favoritos:', obra);
+    alert(`"${obra.titulo}" agregado a favoritos`);
+    // TODO: Implementar lógica real de favoritos
   }
 
   // =========================================================
@@ -212,24 +422,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // 🛒 COMPRAR PRODUCTO DESTACADO
   // =========================================================
   comprarProducto(): void {
-  console.log('🛒 Iniciando proceso de compra de la olla...');
-  
-  const confirmar = confirm(
-    '🛒 Confirmar Compra\n\n' +
-    'Producto: Olla de Barro Huasteca\n' +
-    'Precio: $650.00 MXN\n\n' +
-    '¿Deseas proceder con la compra?'
-  );
-
-  if (confirmar) {
-    alert(
-      '✅ ¡Gracias por tu compra!\n\n' +
-      'Tu pedido ha sido registrado.\n' +
-      'Recibirás un correo con los detalles del envío.\n\n' +
-      'Número de orden: #NUB-' + Math.floor(Math.random() * 100000)
+    console.log('🛒 Iniciando proceso de compra...');
+    
+    const confirmar = confirm(
+      '🛒 Confirmar Compra\n\n' +
+      `Producto: ${this.obraDestacadaPrincipal?.titulo || 'Producto'}\n` +
+      `Precio: $${this.obraDestacadaPrincipal?.precio_minimo || 0} MXN\n\n` +
+      '¿Deseas proceder con la compra?'
     );
+
+    if (confirmar) {
+      alert(
+        '✅ ¡Gracias por tu compra!\n\n' +
+        'Tu pedido ha sido registrado.\n' +
+        'Recibirás un correo con los detalles del envío.\n\n' +
+        'Número de orden: #NUB-' + Math.floor(Math.random() * 100000)
+      );
+    }
   }
-}
 
   // =========================================================
   // 📱 MOSTRAR MODAL QR PARA VER EN 3D
@@ -248,7 +458,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.mostrarModalQR = false;
     document.body.style.overflow = 'auto';
   }
-   // =========================================================
+
+  // =========================================================
   // 🧪 MÉTODO TEMPORAL PARA PROBAR PÁGINAS DE ERROR
   // =========================================================
   testError(code: number): void {
