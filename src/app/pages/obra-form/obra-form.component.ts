@@ -228,24 +228,44 @@ export class ObraFormComponent implements OnInit {
   // =========================================================
   // ➕ CREAR OBRA NUEVA
   // =========================================================
-  async crearObraNueva(datosObra: any): Promise<void> {
+ async crearObraNueva(datosObra: any): Promise<void> {
+    // ✅ VALIDAR QUE HAY IMAGEN
+    if (!this.imagenSeleccionada) {
+      alert('Por favor selecciona una imagen');
+      this.enviando = false;
+      return;
+    }
+
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
+      // NO incluir Content-Type para FormData
     });
 
-    // 1. Crear la obra (sin imagen por ahora)
-    this.http.post(`${environment.apiUrl}/obras`, datosObra, { headers }).subscribe({
-      next: async (response: any) => {
+    // ✅ CREAR FORMDATA CON TODOS LOS DATOS
+    const formData = new FormData();
+    formData.append('titulo', datosObra.titulo);
+    formData.append('descripcion', datosObra.descripcion);
+    formData.append('id_categoria', datosObra.id_categoria);
+    formData.append('id_artista', datosObra.id_artista);
+    
+    if (datosObra.anio_creacion) {
+      formData.append('anio_creacion', datosObra.anio_creacion);
+    }
+    
+    if (datosObra.tecnica) {
+      formData.append('tecnica', datosObra.tecnica);
+    }
+    
+    formData.append('destacada', datosObra.destacada ? '1' : '0');
+    
+    // ✅ AGREGAR LA IMAGEN
+    formData.append('imagen', this.imagenSeleccionada);
+
+    // ✅ ENVIAR TODO EN UNA SOLA PETICIÓN
+    this.http.post(`${environment.apiUrl}/obras`, formData, { headers }).subscribe({
+      next: (response: any) => {
         if (response.success) {
-          const idObraCreada = response.data.id_obra;
-          
-          // 2. Si hay imagen, subirla
-          if (this.imagenSeleccionada) {
-            await this.subirImagen(idObraCreada);
-          }
-          
           alert('✅ Obra creada exitosamente');
           this.router.navigate(['/dashboard']);
         }
@@ -253,7 +273,7 @@ export class ObraFormComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error:', error);
-        alert('Error al crear la obra');
+        alert('Error al crear la obra: ' + (error.error?.message || 'Error desconocido'));
         this.enviando = false;
       }
     });
@@ -265,19 +285,36 @@ export class ObraFormComponent implements OnInit {
   async editarObra(id: number, datosObra: any): Promise<void> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
+      // NO incluir Content-Type para FormData
     });
 
-    // 1. Actualizar datos de la obra
-    this.http.put(`${environment.apiUrl}/obras/${id}`, datosObra, { headers }).subscribe({
-      next: async (response: any) => {
+    // ✅ CREAR FORMDATA
+    const formData = new FormData();
+    formData.append('titulo', datosObra.titulo);
+    formData.append('descripcion', datosObra.descripcion);
+    formData.append('id_categoria', datosObra.id_categoria);
+    formData.append('id_artista', datosObra.id_artista);
+    
+    if (datosObra.anio_creacion) {
+      formData.append('anio_creacion', datosObra.anio_creacion);
+    }
+    
+    if (datosObra.tecnica) {
+      formData.append('tecnica', datosObra.tecnica);
+    }
+    
+    formData.append('destacada', datosObra.destacada ? '1' : '0');
+    
+    // ✅ AGREGAR IMAGEN SI HAY UNA NUEVA
+    if (this.imagenSeleccionada) {
+      formData.append('imagen', this.imagenSeleccionada);
+    }
+
+    // ✅ ACTUALIZAR OBRA
+    this.http.put(`${environment.apiUrl}/obras/${id}`, formData, { headers }).subscribe({
+      next: (response: any) => {
         if (response.success) {
-          // 2. Si hay nueva imagen, subirla
-          if (this.imagenSeleccionada) {
-            await this.subirImagen(id);
-          }
-          
           alert('✅ Obra actualizada exitosamente');
           this.router.navigate(['/dashboard']);
         }
@@ -285,7 +322,7 @@ export class ObraFormComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error:', error);
-        alert('Error al actualizar la obra');
+        alert('Error al actualizar la obra: ' + (error.error?.message || 'Error desconocido'));
         this.enviando = false;
       }
     });
@@ -294,35 +331,7 @@ export class ObraFormComponent implements OnInit {
   // =========================================================
   // 📤 SUBIR IMAGEN A CLOUDINARY
   // =========================================================
-  async subirImagen(idObra: number): Promise<void> {
-    if (!this.imagenSeleccionada) return;
-
-    this.subiendoImagen = true;
-
-    const formData = new FormData();
-    formData.append('imagen', this.imagenSeleccionada);
-    formData.append('id_obra', idObra.toString());
-
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    return new Promise((resolve, reject) => {
-      this.http.post(`${environment.apiUrl}/imagenes/principal`, formData, { headers }).subscribe({
-        next: (response: any) => {
-          console.log('✅ Imagen subida:', response);
-          this.subiendoImagen = false;
-          resolve();
-        },
-        error: (error) => {
-          console.error('❌ Error al subir imagen:', error);
-          this.subiendoImagen = false;
-          reject(error);
-        }
-      });
-    });
-  }
+  
 
   // =========================================================
   // 🔍 VALIDACIONES - GETTERS
