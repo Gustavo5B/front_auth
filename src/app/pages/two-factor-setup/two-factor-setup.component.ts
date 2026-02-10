@@ -30,10 +30,14 @@ export class TwoFactorSetupComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const userData = this.authService.getUserData();
-    this.correo = userData?.correo || '';
+    // ✅ OBTENER CORREO DE LOCALSTORAGE DIRECTAMENTE
+    this.correo = localStorage.getItem('userEmail') || '';
     
-    if (!this.correo) {
+    console.log('📧 Correo obtenido para 2FA:', this.correo); // Debug
+    
+    // ✅ VALIDAR QUE EL CORREO SEA VÁLIDO
+    if (!this.correo || this.correo === '1' || !this.correo.includes('@')) {
+      console.error('❌ Correo inválido:', this.correo);
       this.showMessage('No se pudo obtener el correo. Inicia sesión nuevamente.', true);
       setTimeout(() => this.router.navigate(['/login']), 2000);
       return;
@@ -44,6 +48,8 @@ export class TwoFactorSetupComponent implements OnInit {
 
   cargarQR(): void {
     this.cargando = true;
+    console.log('🔄 Cargando QR para:', this.correo); // Debug
+    
     this.twoFactorService.setupTOTP(this.correo).subscribe({
       next: (response) => {
         this.qrCodeUrl = response.qrCode;
@@ -74,6 +80,8 @@ export class TwoFactorSetupComponent implements OnInit {
       return;
     }
 
+    console.log('🔍 Verificando código para:', this.correo); // Debug
+    
     this.cargando = true;
     this.twoFactorService.verifyTOTP(this.correo, this.codigoVerificacion).subscribe({
       next: (response) => {

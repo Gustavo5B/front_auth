@@ -26,32 +26,33 @@ export class VerifyEmailCodeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-  console.log('📧 Iniciando verificación de Email 2FA...');
-  
-  const state = history.state;
-  const storedEmail = localStorage.getItem('temp_correo_2fa');
-  const userData = this.authService.getUserData();
-
-  // 🔹 Prioridad: state → localStorage → datos del usuario
-  this.correo = state?.correo || storedEmail || userData?.correo || '';
-
-  if (!this.correo) {
-    console.warn('⚠️ No se pudo obtener el correo. Redirigiendo al dashboard...');
-    this.router.navigate(['/dashboard']);
-    return;
+    console.log('📧 Iniciando verificación de Email 2FA...');
+    
+    // ✅ MÉTODO MEJORADO: Obtener correo con validación
+    const state = history.state;
+    const storedEmail = localStorage.getItem('temp_correo_2fa');
+    const userEmail = localStorage.getItem('userEmail'); // ← CORRECCIÓN CLAVE
+    
+    // 🔹 Prioridad: state → temp_correo_2fa → userEmail
+    this.correo = state?.correo || storedEmail || userEmail || '';
+    
+    console.log('📧 Correo obtenido para verificación:', this.correo);
+    
+    // ✅ VALIDACIÓN MEJORADA
+    if (!this.correo || this.correo === '1' || !this.correo.includes('@')) {
+      console.error('❌ Correo inválido:', this.correo);
+      console.warn('⚠️ Redirigiendo al login...');
+      this.showMessage('Error al obtener el correo. Por favor inicia sesión nuevamente.', true);
+      setTimeout(() => this.router.navigate(['/login']), 2000);
+      return;
+    }
+    
+    console.log('✅ Correo validado correctamente');
+    
+    // Inicia temporizador y envía el código automáticamente
+    this.iniciarTemporizador();
+    this.enviarCodigoInicial();
   }
-
-  console.log('✅ Correo obtenido para verificación:', this.correo);
-
-  // Inicia temporizador y envía el código automáticamente
-  this.iniciarTemporizador();
-
-  this.authService.resendLoginCode(this.correo).subscribe({
-    next: () => console.log('📨 Código enviado correctamente a', this.correo),
-    error: (err) => console.error('❌ Error al enviar código:', err)
-  });
-}
-
 
   ngOnDestroy(): void {
     if (this.intervalo) {
@@ -60,9 +61,11 @@ export class VerifyEmailCodeComponent implements OnInit, OnDestroy {
   }
 
   enviarCodigoInicial(): void {
+    console.log('📤 Enviando código inicial a:', this.correo);
+    
     this.authService.resendLoginCode(this.correo).subscribe({
       next: () => {
-        console.log('📧 Código enviado automáticamente');
+        console.log('📨 Código enviado correctamente a', this.correo);
         this.showMessage('📧 Código enviado a tu correo', false);
         setTimeout(() => this.mensaje = '', 3000);
       },
@@ -96,6 +99,8 @@ export class VerifyEmailCodeComponent implements OnInit, OnDestroy {
       return;
     }
 
+    console.log('🔍 Verificando código para:', this.correo);
+    
     this.cargando = true;
     this.authService.verifyLoginCode({ 
       correo: this.correo, 
@@ -105,12 +110,22 @@ export class VerifyEmailCodeComponent implements OnInit, OnDestroy {
         console.log('✅ Verificación exitosa:', res);
         localStorage.removeItem('temp_correo_2fa');
 
-        if (res.token) {
-          this.authService.saveToken(res.token);
+        // ✅ GUARDADO COMPLETO DE DATOS
+        if (res.token || res.access_token) {
+          const token = res.token || res.access_token;
+          this.authService.saveToken(token);
+          localStorage.setItem('access_token', token);
+          localStorage.setItem('token', token);
         }
+        
         if (res.usuario) {
           this.authService.saveUserData(res.usuario);
+          localStorage.setItem('userEmail', res.usuario.correo);
+          localStorage.setItem('userName', res.usuario.nombre);
+          localStorage.setItem('userId', res.usuario.id.toString());
         }
+        
+        localStorage.setItem('isLoggedIn', 'true');
 
         this.showMessage('✅ Código verificado correctamente', false);
         this.cargando = false;
@@ -132,12 +147,14 @@ export class VerifyEmailCodeComponent implements OnInit, OnDestroy {
   reenviarCodigo(): void {
     if (this.cargando) return;
 
+    console.log('🔄 Reenviando código a:', this.correo);
+    
     this.cargando = true;
     this.showMessage('Reenviando código...', false);
     
-    //this.authService.resendLoginCode(this.correo)
     this.authService.resendLoginCode(this.correo).subscribe({
       next: () => {
+        console.log('✅ Código reenviado correctamente');
         this.showMessage('✅ Nuevo código enviado a tu correo', false);
         this.tiempoRestante = 900;
         this.cargando = false;
@@ -159,7 +176,7 @@ export class VerifyEmailCodeComponent implements OnInit, OnDestroy {
 
   volver(): void {
     localStorage.removeItem('temp_correo_2fa');
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/login']);
   }
 
   private showMessage(msg: string, isError: boolean): void {
